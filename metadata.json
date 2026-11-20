@@ -1,0 +1,6 @@
+{
+  "name": "Constriction",
+  "description": "Retro arcade snake trivia game where the snake never stops moving while you race to eat rotting apples and type answers before time runs out.",
+  "requestFramePermissions": [],
+  "majorCapabilities": []
+}

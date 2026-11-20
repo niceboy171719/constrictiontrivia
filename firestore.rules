@@ -1,0 +1,184 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Default deny catch-all
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() >= 1 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isVerifiedUser() {
+      return isSignedIn() && request.auth.token.email_verified == true;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isValidHandle(handle) {
+      return handle is string
+        && handle.size() >= 2
+        && handle.size() <= 20
+        && handle.matches('^[a-zA-Z0-9_\\- ]+$');
+    }
+
+    function isValidDifficulty(diff) {
+      return diff in ['easy', 'medium', 'hard', 'insane', 'extreme'];
+    }
+
+    function expectedWinTarget(diff) {
+      return diff == 'extreme' ? 30 : (diff == 'insane' ? 18 : 25);
+    }
+
+    function isValidUserPrivate(data, userId) {
+      return data.keys().hasAll(['uid', 'email', 'createdAt'])
+        && data.keys().hasOnly(['uid', 'email', 'createdAt'])
+        && data.uid is string
+        && data.uid.size() <= 128
+        && data.uid == userId
+        && data.uid == request.auth.uid
+        && data.email is string
+        && data.email.size() >= 3
+        && data.email.size() <= 254
+        && data.createdAt is timestamp;
+    }
+
+    function isValidProfile(data, userId) {
+      return data.keys().hasAll([
+          'uid', 'handle', 'bestEasy', 'bestMedium', 'bestHard',
+          'bestInsane', 'bestExtreme', 'createdAt', 'updatedAt'
+        ])
+        && data.keys().hasOnly([
+          'uid', 'handle', 'bestEasy', 'bestMedium', 'bestHard',
+          'bestInsane', 'bestExtreme', 'createdAt', 'updatedAt'
+        ])
+        && data.uid is string
+        && data.uid.size() <= 128
+        && data.uid == userId
+        && data.uid == request.auth.uid
+        && isValidHandle(data.handle)
+        && data.bestEasy is int && data.bestEasy >= 0 && data.bestEasy <= 25
+        && data.bestMedium is int && data.bestMedium >= 0 && data.bestMedium <= 25
+        && data.bestHard is int && data.bestHard >= 0 && data.bestHard <= 25
+        && data.bestInsane is int && data.bestInsane >= 0 && data.bestInsane <= 18
+        && data.bestExtreme is int && data.bestExtreme >= 0 && data.bestExtreme <= 30
+        && data.createdAt is timestamp
+        && data.updatedAt is timestamp;
+    }
+
+    function isValidLeaderboardEntry(data, entryId) {
+      return data.keys().hasAll([
+          'uid', 'handle', 'difficulty', 'score', 'winTarget',
+          'won', 'durationMs', 'createdAt', 'updatedAt'
+        ])
+        && data.keys().hasOnly([
+          'uid', 'handle', 'difficulty', 'score', 'winTarget',
+          'won', 'durationMs', 'createdAt', 'updatedAt'
+        ])
+        && data.uid is string
+        && data.uid.size() <= 128
+        && data.uid == request.auth.uid
+        && isValidHandle(data.handle)
+        && isValidDifficulty(data.difficulty)
+        && entryId == (request.auth.uid + '_' + data.difficulty)
+        && data.winTarget is int
+        && data.winTarget == expectedWinTarget(data.difficulty)
+        && data.score is int
+        && data.score >= 0
+        && data.score <= data.winTarget
+        && data.won is bool
+        && data.won == (data.score == data.winTarget)
+        && data.durationMs is int
+        && data.durationMs >= 0
+        && data.durationMs <= 3600000
+        && data.createdAt is timestamp
+        && data.updatedAt is timestamp;
+    }
+
+    // Connection check document
+    match /test/connection {
+      allow get: if true;
+      allow list, write: if false;
+    }
+
+    // Private PII user record
+    match /users/{userId} {
+      allow get: if isOwner(userId) && isValidId(userId);
+      allow list: if false;
+      allow create: if isVerifiedUser()
+        && isOwner(userId)
+        && isValidId(userId)
+        && isValidUserPrivate(incoming(), userId)
+        && incoming().createdAt == request.time;
+      allow update: if false;
+      allow delete: if false;
+    }
+
+    // Public player profile (handle + best scores)
+    match /profiles/{userId} {
+      allow get: if isValidId(userId);
+      allow list: if false;
+      allow create: if isVerifiedUser()
+        && isOwner(userId)
+        && isValidId(userId)
+        && isValidProfile(incoming(), userId)
+        && incoming().createdAt == request.time
+        && incoming().updatedAt == request.time;
+      allow update: if isVerifiedUser()
+        && isOwner(userId)
+        && isValidId(userId)
+        && isValidProfile(incoming(), userId)
+        && incoming().uid == existing().uid
+        && incoming().createdAt == existing().createdAt
+        && incoming().updatedAt == request.time
+        && incoming().diff(existing()).affectedKeys().hasOnly([
+          'handle', 'bestEasy', 'bestMedium', 'bestHard',
+          'bestInsane', 'bestExtreme', 'updatedAt'
+        ]);
+      allow delete: if false;
+    }
+
+    // Global leaderboard entries ({uid}_{difficulty})
+    match /leaderboard/{entryId} {
+      allow get: if isValidId(entryId);
+      allow list: if resource.data.difficulty in ['easy', 'medium', 'hard', 'insane', 'extreme'];
+      allow create: if isVerifiedUser()
+        && isValidId(entryId)
+        && isValidLeaderboardEntry(incoming(), entryId)
+        && incoming().createdAt == request.time
+        && incoming().updatedAt == request.time;
+      allow update: if isVerifiedUser()
+        && isValidId(entryId)
+        && isValidLeaderboardEntry(incoming(), entryId)
+        && incoming().uid == existing().uid
+        && incoming().difficulty == existing().difficulty
+        && incoming().winTarget == expectedWinTarget(existing().difficulty)
+        && incoming().createdAt == existing().createdAt
+        && incoming().updatedAt == request.time
+        && (
+          incoming().score > existing().score
+          || (incoming().score == existing().score && incoming().durationMs <= existing().durationMs)
+          || (incoming().score == existing().score && incoming().durationMs == existing().durationMs && incoming().handle != existing().handle)
+        )
+        && incoming().diff(existing()).affectedKeys().hasOnly([
+          'handle', 'score', 'winTarget', 'won', 'durationMs', 'updatedAt'
+        ]);
+      allow delete: if false;
+    }
+  }
+}

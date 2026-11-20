@@ -1,0 +1,50 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --font-display: 'Press Start 2P', monospace;
+    --font-pixel: 'Silkscreen', monospace;
+    --font-mono: 'JetBrains Mono', monospace;
+  }
+
+  html,
+  body {
+    font-family: var(--font-pixel);
+    background-color: #09090d;
+    color: #ede5d0;
+    overscroll-behavior: none;
+  }
+}
+
+.font-display-pixel {
+  font-family: var(--font-display);
+}
+
+.font-ui-pixel {
+  font-family: var(--font-pixel);
+}
+
+.font-mono-input {
+  font-family: var(--font-mono);
+}
+
+.crt-scanlines {
+  background-image: repeating-linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.028) 0px,
+    rgba(255, 255, 255, 0.028) 1px,
+    rgba(0, 0, 0, 0.16) 1px,
+    rgba(0, 0, 0, 0.16) 3px
+  );
+}
+
+.pixel-shadow {
+  box-shadow: 0 3px 0 0 rgba(0, 0, 0, 0.65);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
