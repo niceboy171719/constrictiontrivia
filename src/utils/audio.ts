@@ -78,29 +78,43 @@ class SoundEngine {
     if (!ctx) return;
 
     const now = ctx.currentTime;
+    const jitter = 0.92 + Math.random() * 0.16;
 
-    // 1. Crisp mechanical key-switch click transient
-    const noiseSrc = ctx.createBufferSource();
-    noiseSrc.buffer = this.getNoiseBuffer(ctx);
+    // 1. Crisp keycap transient click (short filtered noise, no pitched beep)
+    const clickSrc = ctx.createBufferSource();
+    clickSrc.buffer = this.getNoiseBuffer(ctx);
 
-    const filter = ctx.createBiquadFilter();
-    filter.type = 'bandpass';
-    filter.frequency.setValueAtTime(isDelete ? 1400 : 2500 + Math.random() * 450, now);
-    filter.Q.setValueAtTime(2.2, now);
+    const clickFilter = ctx.createBiquadFilter();
+    clickFilter.type = 'bandpass';
+    clickFilter.frequency.setValueAtTime((isDelete ? 1900 : 3100) * jitter, now);
+    clickFilter.Q.setValueAtTime(1.4, now);
 
-    const noiseGain = ctx.createGain();
-    noiseGain.gain.setValueAtTime(isDelete ? 0.045 : 0.065, now);
-    noiseGain.gain.exponentialRampToValueAtTime(0.001, now + 0.018);
+    const clickGain = ctx.createGain();
+    clickGain.gain.setValueAtTime(isDelete ? 0.07 : 0.095, now);
+    clickGain.gain.exponentialRampToValueAtTime(0.001, now + 0.011);
 
-    noiseSrc.connect(filter);
-    filter.connect(noiseGain);
-    noiseGain.connect(ctx.destination);
-    noiseSrc.start(now);
-    noiseSrc.stop(now + 0.022);
+    clickSrc.connect(clickFilter);
+    clickFilter.connect(clickGain);
+    clickGain.connect(ctx.destination);
+    clickSrc.start(now);
+    clickSrc.stop(now + 0.014);
 
-    // 2. Subtle pitched keycap pip
-    const baseFreq = isDelete ? 460 : 860 + (Math.random() - 0.5) * 140;
-    this.playTone(baseFreq, 0.024, 'triangle', isDelete ? 0.035 : 0.045, 0);
+    // 2. Muted housing bottom-out thock (rapid downward pitch drop, ~18ms)
+    const thockOsc = ctx.createOscillator();
+    const thockGain = ctx.createGain();
+    thockOsc.type = 'sine';
+    const startHz = (isDelete ? 145 : 210) * jitter;
+    const endHz = (isDelete ? 62 : 78) * jitter;
+    thockOsc.frequency.setValueAtTime(startHz, now);
+    thockOsc.frequency.exponentialRampToValueAtTime(endHz, now + 0.018);
+
+    thockGain.gain.setValueAtTime(isDelete ? 0.075 : 0.065, now);
+    thockGain.gain.exponentialRampToValueAtTime(0.001, now + 0.021);
+
+    thockOsc.connect(thockGain);
+    thockGain.connect(ctx.destination);
+    thockOsc.start(now);
+    thockOsc.stop(now + 0.024);
   }
 
   playAppleEat() {
@@ -109,12 +123,9 @@ class SoundEngine {
   }
 
   playCorrect() {
-    // Punchy 4-note ascending chime with octave sparkle
-    this.playTone(523.25, 0.075, 'square', 0.095, 0);
-    this.playTone(659.25, 0.075, 'square', 0.095, 0.055);
-    this.playTone(783.99, 0.085, 'square', 0.1, 0.11);
-    this.playTone(1046.5, 0.18, 'square', 0.11, 0.165);
-    this.playTone(1046.5, 0.2, 'triangle', 0.09, 0.165);
+    // Crisp 2-note confirmation chime (G5 -> C6), distinct from apple eat
+    this.playTone(783.99, 0.085, 'triangle', 0.13, 0);
+    this.playTone(1046.5, 0.19, 'triangle', 0.14, 0.075);
   }
 
   playWrong() {

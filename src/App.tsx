@@ -12,7 +12,12 @@ import {
 import { AccountModal } from './components/AccountModal';
 import { GameCanvas } from './components/GameCanvas';
 import { SnakeLogo } from './components/SnakeLogo';
-import { DIFFICULTIES, DIFFICULTY_ORDER } from './constants/difficulties';
+import {
+  DIFFICULTIES,
+  DIFFICULTY_ORDER,
+  formatSpikeCount,
+  getSpikeCountForDifficulty,
+} from './constants/difficulties';
 import { GAME_THEMES, THEME_ORDER } from './constants/themes';
 import { auth, googleProvider } from './firebase';
 import {
@@ -29,6 +34,7 @@ import type {
   GameState,
   Point,
   QuestionItem,
+  RunMode,
   ThemeId,
 } from './types/game';
 import { soundEngine } from './utils/audio';
@@ -118,6 +124,8 @@ export default function App() {
   const [modalTab, setModalTab] = useState<'leaderboard' | 'account'>('leaderboard');
 
   const [isBotRun, setIsBotRun] = useState<boolean>(false);
+  const [runMode, setRunMode] = useState<RunMode>('standard');
+  const [practiceNote, setPracticeNote] = useState<string | null>(null);
 
   const theme = GAME_THEMES[themeId];
   const difficulty = DIFFICULTIES[difficultyId];
@@ -125,6 +133,7 @@ export default function App() {
   // Mutable refs for crisp 60fps loop
   const gameStateRef = useRef<GameState>(gameState);
   const isBotRunRef = useRef<boolean>(isBotRun);
+  const runModeRef = useRef<RunMode>(runMode);
   const snakeRef = useRef<Point[]>(snake);
   const dirRef = useRef<Direction>(direction);
   const dirQueueRef = useRef<Direction[]>([]);
@@ -213,7 +222,16 @@ export default function App() {
     try {
       await signInWithPopup(auth, googleProvider);
     } catch (err) {
-      setAuthError(err instanceof Error ? err.message : 'Sign-in cancelled or blocked.');
+      const code = (err as { code?: string })?.code ?? '';
+      const msg = err instanceof Error ? err.message : 'Sign-in cancelled or blocked.';
+      if (code === 'auth/unauthorized-domain' || msg.includes('unauthorized-domain')) {
+        const host = typeof window !== 'undefined' ? window.location.hostname : 'this domain';
+        setAuthError(
+          `Domain "${host}" is not in Firebase Auth Authorized domains yet. Add it in Firebase Console → Authentication → Settings → Authorized domains.`
+        );
+      } else {
+        setAuthError(msg);
+      }
     } finally {
       setAuthLoading(false);
     }
@@ -293,7 +311,8 @@ export default function App() {
         performance.now() - runStartMsRef.current - pausedDurationMsRef.current
       );
       setRunElapsedSeconds(elapsedMs / 1000);
-      if (!isBotRunRef.current) {
+      const isRankedRun = !isBotRunRef.current && runModeRef.current === 'standard';
+      if (isRankedRun) {
         updateBestScore(difficultyRef.current.id, scoreRef.current);
       }
 
@@ -305,6 +324,11 @@ export default function App() {
 
       if (isBotRunRef.current) {
         setCloudSyncNote('Bot run · Unranked (does not count toward Best or Leaderboard).');
+        return;
+      }
+
+      if (runModeRef.current !== 'standard') {
+        setCloudSyncNote('Practice run · Unranked (does not count toward Best or Leaderboard).');
         return;
       }
 
@@ -332,7 +356,13 @@ export default function App() {
   );
 
   const enqueueDirection = useCallback((nextDir: Direction) => {
-    if (gameStateRef.current !== 'PLAYING' || isBotRunRef.current) return;
+    if (
+      gameStateRef.current !== 'PLAYING' ||
+      isBotRunRef.current ||
+      runModeRef.current === 'practice_trivia'
+    ) {
+      return;
+    }
     const queue = dirQueueRef.current;
     const latest = queue.length > 0 ? queue[queue.length - 1] : dirRef.current;
     if (nextDir === latest || isOppositeDirection(latest, nextDir)) return;
@@ -350,7 +380,7 @@ export default function App() {
     ) => {
       const nextApple = spawnApple(currentSnake, currentStones, []);
       const nextSpikes = spawnRandomizedSpikes(
-        cfg.spikesPerApple,
+        getSpikeCountForDifficulty(cfg),
         currentSnake,
         currentDir,
         nextApple,
@@ -370,7 +400,7 @@ export default function App() {
   );
 
   const startGame = useCallback(
-    (botEnabled = false) => {
+    (mode: RunMode = 'standard', botEnabled = false) => {
       soundEngine.unlock();
       const cfg = DIFFICULTIES[difficultyId];
       const startSnake: Point[] = [
@@ -380,6 +410,8 @@ export default function App() {
       ];
       const startDir: Direction = 'RIGHT';
 
+      runModeRef.current = mode;
+      setRunMode(mode);
       isBotRunRef.current = botEnabled;
       setIsBotRun(botEnabled);
 
@@ -408,6 +440,7 @@ export default function App() {
       setScore(0);
       setIsNewBest(false);
       setCloudSyncNote(null);
+      setPracticeNote(null);
       setCurrentSpeed(cfg.speed);
       setActiveQuestion(null);
       setQuestionQueue([]);
@@ -417,10 +450,24 @@ export default function App() {
       setEndReason('');
       setCallouts([]);
 
-      spawnRoundAppleAndSpikes(startSnake, startDir, [], cfg);
+      if (mode === 'practice_trivia') {
+        appleRef.current = null;
+        setApple(null);
+        appleRemainingRef.current = cfg.appleRotSeconds;
+        setAppleRemaining(cfg.appleRotSeconds);
 
-      gameStateRef.current = 'PLAYING';
-      setGameState('PLAYING');
+        const firstQ = pickQuestion(cfg.questionTiers, usedPromptsRef.current);
+        activeQuestionRef.current = firstQ;
+        setActiveQuestion(firstQ);
+
+        gameStateRef.current = 'PLAYING';
+        setGameState('PLAYING');
+        setTimeout(() => answerInputRef.current?.focus(), 20);
+      } else {
+        spawnRoundAppleAndSpikes(startSnake, startDir, [], cfg);
+        gameStateRef.current = 'PLAYING';
+        setGameState('PLAYING');
+      }
     },
     [difficultyId, spawnRoundAppleAndSpikes]
   );
@@ -440,6 +487,24 @@ export default function App() {
     }
   }, []);
 
+  const skipPracticeQuestion = useCallback(() => {
+    if (gameStateRef.current !== 'PLAYING' || runModeRef.current !== 'practice_trivia') return;
+    const currentQ = activeQuestionRef.current;
+    const cfg = difficultyRef.current;
+    const revealed = currentQ?.answers[0];
+    if (revealed) {
+      setPracticeNote(`Skipped — answer was "${revealed}"`);
+    }
+    const nextQ = pickQuestion(cfg.questionTiers, usedPromptsRef.current);
+    activeQuestionRef.current = nextQ;
+    setActiveQuestion(nextQ);
+    setAnswerInput('');
+    setWrongFeedback(null);
+    questionRemainingRef.current = cfg.answerSeconds;
+    setQuestionRemaining(cfg.answerSeconds);
+    setTimeout(() => answerInputRef.current?.focus(), 10);
+  }, []);
+
   const submitAnswerValue = useCallback(
     (rawValue: string) => {
       if (gameStateRef.current !== 'PLAYING') return;
@@ -452,13 +517,32 @@ export default function App() {
         const nextScore = scoreRef.current + 1;
         scoreRef.current = nextScore;
         setScore(nextScore);
-        if (!isBotRunRef.current) {
+        if (!isBotRunRef.current && runModeRef.current === 'standard') {
           updateBestScore(cfg.id, nextScore);
         }
 
-        pendingGrowthRef.current += 1;
         setAnswerInput('');
         setWrongFeedback(null);
+
+        if (runModeRef.current === 'practice_trivia') {
+          setPracticeNote(`Correct! "${currentQ.answers[0]}"`);
+          if (nextScore >= cfg.winTarget) {
+            activeQuestionRef.current = null;
+            setActiveQuestion(null);
+            endGame('WON', `Answered all ${cfg.winTarget} ${cfg.label} questions!`);
+            return;
+          }
+
+          const nextQ = pickQuestion(cfg.questionTiers, usedPromptsRef.current);
+          activeQuestionRef.current = nextQ;
+          setActiveQuestion(nextQ);
+          questionRemainingRef.current = cfg.answerSeconds;
+          setQuestionRemaining(cfg.answerSeconds);
+          setTimeout(() => answerInputRef.current?.focus(), 10);
+          return;
+        }
+
+        pendingGrowthRef.current += 1;
 
         const head = snakeRef.current[0];
         addCallout(head.x, head.y, '+1', theme.appleFresh);
@@ -516,7 +600,11 @@ export default function App() {
         }
       } else {
         soundEngine.playWrong();
-        setWrongFeedback('Not quite — keep steering!');
+        setWrongFeedback(
+          runModeRef.current === 'practice_trivia'
+            ? 'Not quite — try again or reveal & skip!'
+            : 'Not quite — keep steering!'
+        );
         setAnswerInput('');
       }
     },
@@ -612,7 +700,45 @@ export default function App() {
       const dtSec = dtMs / 1000;
       lastFrame = now;
 
-      // 1. Apple rot timer ALWAYS runs during play
+      const mode = runModeRef.current;
+
+      // Trivia-only practice: only run the question countdown (no apple or snake movement)
+      if (mode === 'practice_trivia') {
+        if (activeQuestionRef.current !== null) {
+          questionRemainingRef.current = Math.max(0, questionRemainingRef.current - dtSec);
+          if (questionRemainingRef.current <= 0) {
+            setQuestionRemaining(0);
+            const missedAns = activeQuestionRef.current.answers[0];
+            endGame(
+              'GAME_OVER',
+              missedAns
+                ? `Time ran out (answer: "${missedAns}").`
+                : 'Time ran out on the question.'
+            );
+            return;
+          }
+
+          if (
+            questionRemainingRef.current > 0 &&
+            questionRemainingRef.current <= 2.0 &&
+            now - lastUrgentTickRef.current > 550
+          ) {
+            lastUrgentTickRef.current = now;
+            soundEngine.playUrgentTick();
+          }
+
+          uiTimerSyncAccumulator += dtMs;
+          if (uiTimerSyncAccumulator >= 33) {
+            uiTimerSyncAccumulator = 0;
+            setQuestionRemaining(questionRemainingRef.current);
+          }
+        }
+
+        rafId = requestAnimationFrame(tick);
+        return;
+      }
+
+      // 1. Apple rot timer runs during standard and snake-practice play
       appleRemainingRef.current = Math.max(0, appleRemainingRef.current - dtSec);
       if (appleRemainingRef.current <= 0) {
         setAppleRemaining(0);
@@ -621,7 +747,7 @@ export default function App() {
       }
 
       // 2. Question timer runs whenever an active question is open
-      if (activeQuestionRef.current !== null) {
+      if (mode === 'standard' && activeQuestionRef.current !== null) {
         questionRemainingRef.current = Math.max(0, questionRemainingRef.current - dtSec);
         if (questionRemainingRef.current <= 0) {
           setQuestionRemaining(0);
@@ -632,7 +758,7 @@ export default function App() {
 
       // Urgent audio tick when either timer is < 2.0s
       const minTimer =
-        activeQuestionRef.current !== null
+        mode === 'standard' && activeQuestionRef.current !== null
           ? Math.min(appleRemainingRef.current, questionRemainingRef.current)
           : appleRemainingRef.current;
       if (minTimer > 0 && minTimer <= 2.0 && now - lastUrgentTickRef.current > 550) {
@@ -644,7 +770,7 @@ export default function App() {
       if (uiTimerSyncAccumulator >= 33) {
         uiTimerSyncAccumulator = 0;
         setAppleRemaining(appleRemainingRef.current);
-        if (activeQuestionRef.current !== null) {
+        if (mode === 'standard' && activeQuestionRef.current !== null) {
           setQuestionRemaining(questionRemainingRef.current);
         }
       }
@@ -711,29 +837,65 @@ export default function App() {
         }
         snakeRef.current = nextSnake;
 
-        // Check apple eat -> ALWAYS spawn next apple immediately + queue new question!
+        // Check apple eat
         const curApple = appleRef.current;
         if (curApple && nextHead.x === curApple.x && nextHead.y === curApple.y) {
           soundEngine.playAppleEat();
           const cfg = difficultyRef.current;
-          const newQ = pickQuestion(cfg.questionTiers, usedPromptsRef.current);
 
-          if (activeQuestionRef.current === null) {
-            activeQuestionRef.current = newQ;
-            setActiveQuestion(newQ);
-            setAnswerInput('');
-            setWrongFeedback(null);
-            questionRemainingRef.current = cfg.answerSeconds;
-            setQuestionRemaining(cfg.answerSeconds);
-            addCallout(nextHead.x, nextHead.y, 'CHOMP!', theme.accent);
-            if (!isBotRunRef.current) {
-              setTimeout(() => answerInputRef.current?.focus(), 10);
+          if (mode === 'practice_snake') {
+            const nextScore = scoreRef.current + 1;
+            scoreRef.current = nextScore;
+            setScore(nextScore);
+            pendingGrowthRef.current += 1;
+            addCallout(nextHead.x, nextHead.y, '+1', theme.appleFresh);
+
+            if (nextScore >= cfg.winTarget) {
+              endGame('WON', `Cleared all ${cfg.winTarget} apples in Snake Practice!`);
+              return;
+            }
+
+            const nextSpeed = Number((speedRef.current + cfg.speedRampPerAnswer).toFixed(2));
+            speedRef.current = nextSpeed;
+            setCurrentSpeed(nextSpeed);
+
+            if (cfg.stonesPerCorrect > 0) {
+              stoneFractionRef.current += cfg.stonesPerCorrect;
+              const stonesToAdd = Math.floor(stoneFractionRef.current + 1e-9);
+              if (stonesToAdd > 0) {
+                stoneFractionRef.current -= stonesToAdd;
+                const updatedStones = spawnStones(
+                  stonesToAdd,
+                  nextSnake,
+                  dirRef.current,
+                  null,
+                  stonesRef.current,
+                  []
+                );
+                stonesRef.current = updatedStones;
+                setStones(updatedStones);
+              }
             }
           } else {
-            const nextQueue = [...questionQueueRef.current, newQ];
-            questionQueueRef.current = nextQueue;
-            setQuestionQueue(nextQueue);
-            addCallout(nextHead.x, nextHead.y, `Q+${nextQueue.length}`, theme.accent);
+            const newQ = pickQuestion(cfg.questionTiers, usedPromptsRef.current);
+
+            if (activeQuestionRef.current === null) {
+              activeQuestionRef.current = newQ;
+              setActiveQuestion(newQ);
+              setAnswerInput('');
+              setWrongFeedback(null);
+              questionRemainingRef.current = cfg.answerSeconds;
+              setQuestionRemaining(cfg.answerSeconds);
+              addCallout(nextHead.x, nextHead.y, 'CHOMP!', theme.accent);
+              if (!isBotRunRef.current) {
+                setTimeout(() => answerInputRef.current?.focus(), 10);
+              }
+            } else {
+              const nextQueue = [...questionQueueRef.current, newQ];
+              questionQueueRef.current = nextQueue;
+              setQuestionQueue(nextQueue);
+              addCallout(nextHead.x, nextHead.y, `Q+${nextQueue.length}`, theme.accent);
+            }
           }
 
           // Immediately spawn fresh apple (and re-randomize spikes on Insane/Extreme)
@@ -945,13 +1107,21 @@ export default function App() {
             <span>
               Score {score}/{difficulty.winTarget}
             </span>
-            <span>Speed {currentSpeed.toFixed(1)}/s</span>
             <span>
-              {isBotRun && gameState !== 'TITLE_MENU' ? 'Bot · Unranked' : `Best ${bestForSelected}`}
+              {runMode === 'practice_trivia' && gameState !== 'TITLE_MENU'
+                ? 'Trivia drill'
+                : `Speed ${currentSpeed.toFixed(1)}/s`}
+            </span>
+            <span>
+              {isBotRun && gameState !== 'TITLE_MENU'
+                ? 'Bot · Unranked'
+                : runMode !== 'standard' && gameState !== 'TITLE_MENU'
+                  ? 'Practice · Unranked'
+                  : `Best ${bestForSelected}`}
             </span>
           </div>
 
-          {/* Apple Rot Timer (always active during play) */}
+          {/* Apple Rot Timer (always active during standard / snake practice) */}
           <div className="flex items-center gap-2.5">
             <span className="text-[11px] sm:text-xs w-14 shrink-0" style={{ color: theme.muted }}>
               Apple
@@ -963,13 +1133,20 @@ export default function App() {
               <div
                 className="h-full transition-[width] duration-75 ease-linear"
                 style={{
-                  width: `${gameState === 'PLAYING' ? appleRatio * 100 : 0}%`,
-                  backgroundColor: getBarColor(appleRatio),
+                  width: `${
+                    gameState === 'PLAYING' && runMode !== 'practice_trivia' ? appleRatio * 100 : 0
+                  }%`,
+                  backgroundColor:
+                    runMode === 'practice_trivia' ? theme.panelBorder : getBarColor(appleRatio),
                 }}
               />
             </div>
             <span className="text-[11px] tabular-nums w-11 text-right shrink-0" style={{ color: theme.muted }}>
-              {gameState === 'PLAYING' ? `${appleRemaining.toFixed(1)}s` : `${difficulty.appleRotSeconds}s`}
+              {runMode === 'practice_trivia' && gameState !== 'TITLE_MENU'
+                ? 'Off'
+                : gameState === 'PLAYING'
+                  ? `${appleRemaining.toFixed(1)}s`
+                  : `${difficulty.appleRotSeconds}s`}
             </span>
           </div>
 
@@ -977,7 +1154,10 @@ export default function App() {
           <div className="flex items-center gap-2.5">
             <span
               className="text-[11px] sm:text-xs w-14 shrink-0"
-              style={{ color: activeQuestion ? theme.accent : theme.muted }}
+              style={{
+                color:
+                  runMode !== 'practice_snake' && activeQuestion ? theme.accent : theme.muted,
+              }}
             >
               Answer
             </span>
@@ -988,15 +1168,26 @@ export default function App() {
               <div
                 className="h-full transition-[width] duration-75 ease-linear"
                 style={{
-                  width: `${gameState === 'PLAYING' && activeQuestion ? questionRatio * 100 : 0}%`,
-                  backgroundColor: activeQuestion ? getBarColor(questionRatio) : theme.panelBorder,
+                  width: `${
+                    gameState === 'PLAYING' &&
+                    runMode !== 'practice_snake' &&
+                    activeQuestion
+                      ? questionRatio * 100
+                      : 0
+                  }%`,
+                  backgroundColor:
+                    runMode !== 'practice_snake' && activeQuestion
+                      ? getBarColor(questionRatio)
+                      : theme.panelBorder,
                 }}
               />
             </div>
             <span className="text-[11px] tabular-nums w-11 text-right shrink-0" style={{ color: theme.muted }}>
-              {gameState === 'PLAYING' && activeQuestion
-                ? `${questionRemaining.toFixed(1)}s`
-                : `${difficulty.answerSeconds}s`}
+              {runMode === 'practice_snake' && gameState !== 'TITLE_MENU'
+                ? 'Off'
+                : gameState === 'PLAYING' && activeQuestion
+                  ? `${questionRemaining.toFixed(1)}s`
+                  : `${difficulty.answerSeconds}s`}
             </span>
           </div>
         </section>
@@ -1019,11 +1210,65 @@ export default function App() {
             spikesSpawnedAt={spikesSpawnedAt}
             theme={theme}
             callouts={callouts}
-            isPlaying={gameState === 'PLAYING'}
+            isPlaying={gameState === 'PLAYING' && runMode !== 'practice_trivia'}
           />
 
+          {/* TRIVIA PRACTICE ARENA VIEW */}
+          {gameState === 'PLAYING' && runMode === 'practice_trivia' && (
+            <div
+              className="absolute inset-0 z-10 flex flex-col items-center justify-center p-6 text-center crt-scanlines"
+              style={{ backgroundColor: 'rgba(11, 11, 17, 0.90)' }}
+            >
+              <p className="text-[11px] mb-1.5" style={{ color: theme.muted }}>
+                {difficulty.label} · Unranked Drill
+              </p>
+              <h2 className="font-display-pixel text-base sm:text-lg mb-3" style={{ color: theme.accent }}>
+                TRIVIA PRACTICE
+              </h2>
+              <div
+                className="w-full max-w-[270px] p-3 mb-4 border text-xs tabular-nums flex flex-col gap-1.5"
+                style={{
+                  backgroundColor: theme.panelBg,
+                  borderColor: theme.panelBorder,
+                }}
+              >
+                <div className="flex justify-between">
+                  <span style={{ color: theme.muted }}>Progress</span>
+                  <span>
+                    {score}/{difficulty.winTarget}
+                  </span>
+                </div>
+                <div className="flex justify-between">
+                  <span style={{ color: theme.muted }}>Timer per Q</span>
+                  <span>{difficulty.answerSeconds}s</span>
+                </div>
+                <div className="flex justify-between">
+                  <span style={{ color: theme.muted }}>Snake hazards</span>
+                  <span>Disabled</span>
+                </div>
+              </div>
+              {practiceNote && (
+                <p className="text-xs mb-4 max-w-[280px]" style={{ color: theme.text }}>
+                  {practiceNote}
+                </p>
+              )}
+              <button
+                type="button"
+                onClick={skipPracticeQuestion}
+                className="min-h-[38px] px-4 py-1.5 text-xs font-bold border hover:opacity-90 whitespace-nowrap"
+                style={{
+                  backgroundColor: theme.panelBg,
+                  color: theme.text,
+                  borderColor: theme.panelBorder,
+                }}
+              >
+                Reveal & skip
+              </button>
+            </div>
+          )}
+
           {/* Touch swipe fallback on arena */}
-          {gameState === 'PLAYING' && (
+          {gameState === 'PLAYING' && runMode !== 'practice_trivia' && (
             <div
               className="absolute inset-0 z-10 touch-none"
               onTouchStart={(e) => {
@@ -1049,14 +1294,14 @@ export default function App() {
           {/* TITLE MENU OVERLAY */}
           {gameState === 'TITLE_MENU' && (
             <div
-              className="absolute inset-0 z-20 flex flex-col justify-center p-5 sm:p-7 crt-scanlines"
+              className="absolute inset-0 z-20 flex flex-col justify-center p-3.5 sm:p-6 crt-scanlines"
               style={{ backgroundColor: 'rgba(11, 11, 17, 0.92)' }}
             >
-              <h2 className="text-sm sm:text-base font-bold mb-3" style={{ color: theme.text }}>
+              <h2 className="text-xs sm:text-base font-bold mb-2 sm:mb-3" style={{ color: theme.text }}>
                 Pick a difficulty
               </h2>
 
-              <div className="grid grid-cols-2 gap-2.5 mb-3.5">
+              <div className="grid grid-cols-2 gap-1.5 sm:gap-2.5 mb-2.5 sm:mb-3">
                 {DIFFICULTY_ORDER.map((id) => {
                   const cfg = DIFFICULTIES[id];
                   const selected = id === difficultyId;
@@ -1066,7 +1311,7 @@ export default function App() {
                       key={id}
                       type="button"
                       onClick={() => setDifficultyId(id)}
-                      className={`min-h-[44px] px-3 py-2 text-xs sm:text-sm font-bold transition-colors whitespace-nowrap focus-visible:outline-2 focus-visible:outline-offset-2 ${
+                      className={`min-h-[36px] sm:min-h-[42px] px-3 py-1.5 sm:py-2 text-xs sm:text-sm font-bold transition-colors whitespace-nowrap focus-visible:outline-2 focus-visible:outline-offset-2 ${
                         isFullWidth ? 'col-span-2' : ''
                       }`}
                       style={{
@@ -1083,17 +1328,17 @@ export default function App() {
               </div>
 
               <p
-                className="text-xs leading-relaxed mb-4 min-h-[3.2rem]"
+                className="text-[11px] sm:text-xs leading-snug sm:leading-relaxed mb-2.5 sm:mb-3.5 min-h-[2.6rem] sm:min-h-[3rem]"
                 style={{ color: theme.muted }}
               >
                 {difficulty.description}
               </p>
 
-              <div className="flex flex-col gap-2">
+              <div className="flex flex-col gap-1.5 sm:gap-2">
                 <button
                   type="button"
-                  onClick={() => startGame(false)}
-                  className="w-full min-h-[46px] py-2.5 px-4 text-sm sm:text-base font-bold pixel-shadow transition-transform active:translate-y-[2px] focus-visible:outline-2 focus-visible:outline-offset-2"
+                  onClick={() => startGame('standard', false)}
+                  className="w-full min-h-[40px] sm:min-h-[44px] py-2 px-4 text-xs sm:text-base font-bold pixel-shadow transition-transform active:translate-y-[2px] focus-visible:outline-2 focus-visible:outline-offset-2 whitespace-nowrap"
                   style={{
                     backgroundColor: theme.buttonBg,
                     color: theme.buttonText,
@@ -1101,10 +1346,36 @@ export default function App() {
                 >
                   Start game
                 </button>
+                <div className="grid grid-cols-2 gap-1.5 sm:gap-2">
+                  <button
+                    type="button"
+                    onClick={() => startGame('practice_snake', false)}
+                    className="min-h-[36px] sm:min-h-[38px] py-1.5 px-2 text-[11px] sm:text-xs font-bold border hover:opacity-90 focus-visible:outline-2 focus-visible:outline-offset-2 whitespace-nowrap"
+                    style={{
+                      backgroundColor: theme.panelBg,
+                      color: theme.text,
+                      borderColor: theme.panelBorder,
+                    }}
+                  >
+                    Practice Snake
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => startGame('practice_trivia', false)}
+                    className="min-h-[36px] sm:min-h-[38px] py-1.5 px-2 text-[11px] sm:text-xs font-bold border hover:opacity-90 focus-visible:outline-2 focus-visible:outline-offset-2 whitespace-nowrap"
+                    style={{
+                      backgroundColor: theme.panelBg,
+                      color: theme.text,
+                      borderColor: theme.panelBorder,
+                    }}
+                  >
+                    Practice Trivia
+                  </button>
+                </div>
                 <button
                   type="button"
-                  onClick={() => startGame(true)}
-                  className="w-full min-h-[40px] py-2 px-4 text-xs font-bold border flex items-center justify-center gap-2 transition-opacity hover:opacity-90 focus-visible:outline-2 focus-visible:outline-offset-2"
+                  onClick={() => startGame('standard', true)}
+                  className="w-full min-h-[34px] sm:min-h-[38px] py-1.5 px-4 text-[11px] sm:text-xs font-bold border flex items-center justify-center gap-2 transition-opacity hover:opacity-90 focus-visible:outline-2 focus-visible:outline-offset-2 whitespace-nowrap"
                   style={{
                     backgroundColor: theme.panelBg,
                     color: theme.text,
@@ -1128,7 +1399,15 @@ export default function App() {
                 PAUSED
               </h2>
               <p className="text-xs mb-5" style={{ color: theme.muted }}>
-                {difficulty.label} · Score {score}/{difficulty.winTarget}
+                {difficulty.label}
+                {runMode === 'practice_snake'
+                  ? ' · Snake Practice'
+                  : runMode === 'practice_trivia'
+                    ? ' · Trivia Practice'
+                    : isBotRun
+                      ? ' · Bot'
+                      : ''}{' '}
+                · Score {score}/{difficulty.winTarget}
               </p>
               <div className="flex flex-col gap-2.5 w-full max-w-[260px]">
                 <button
@@ -1144,6 +1423,8 @@ export default function App() {
                   onClick={() => {
                     isBotRunRef.current = false;
                     setIsBotRun(false);
+                    runModeRef.current = 'standard';
+                    setRunMode('standard');
                     setGameState('TITLE_MENU');
                   }}
                   className="min-h-[44px] py-2 px-4 text-xs border"
@@ -1173,9 +1454,13 @@ export default function App() {
                   ? gameState === 'WON'
                     ? 'BOT VICTORY'
                     : 'BOT OVER'
-                  : gameState === 'WON'
-                    ? 'VICTORY'
-                    : 'GAME OVER'}
+                  : runMode !== 'standard'
+                    ? gameState === 'WON'
+                      ? 'PRACTICE CLEARED'
+                      : 'PRACTICE OVER'
+                    : gameState === 'WON'
+                      ? 'VICTORY'
+                      : 'GAME OVER'}
               </h2>
               <p className="text-xs sm:text-sm mb-3 max-w-[300px]" style={{ color: theme.text }}>
                 {endReason}
@@ -1189,8 +1474,15 @@ export default function App() {
                 }}
               >
                 <div className="flex justify-between">
-                  <span style={{ color: theme.muted }}>Difficulty</span>
-                  <span>{difficulty.label}</span>
+                  <span style={{ color: theme.muted }}>Mode</span>
+                  <span>
+                    {difficulty.label}
+                    {runMode === 'practice_snake'
+                      ? ' (Snake)'
+                      : runMode === 'practice_trivia'
+                        ? ' (Trivia)'
+                        : ''}
+                  </span>
                 </div>
                 <div className="flex justify-between">
                   <span style={{ color: theme.muted }}>Score</span>
@@ -1204,9 +1496,14 @@ export default function App() {
                 </div>
                 <div className="flex justify-between">
                   <span style={{ color: theme.muted }}>Best</span>
-                  <span style={{ color: !isBotRun && isNewBest ? theme.accent : theme.text }}>
+                  <span
+                    style={{
+                      color:
+                        !isBotRun && runMode === 'standard' && isNewBest ? theme.accent : theme.text,
+                    }}
+                  >
                     {bestForSelected}
-                    {!isBotRun && isNewBest ? ' (New!)' : ''}
+                    {!isBotRun && runMode === 'standard' && isNewBest ? ' (New!)' : ''}
                   </span>
                 </div>
               </div>
@@ -1220,11 +1517,15 @@ export default function App() {
               <div className="flex flex-col gap-2 w-full max-w-[280px]">
                 <button
                   type="button"
-                  onClick={() => startGame(isBotRun)}
+                  onClick={() => startGame(runMode, isBotRun)}
                   className="min-h-[42px] py-2 px-4 text-sm font-bold pixel-shadow transition-transform active:translate-y-[2px]"
                   style={{ backgroundColor: theme.buttonBg, color: theme.buttonText }}
                 >
-                  {isBotRun ? 'Watch Bot again' : 'Play again'}
+                  {isBotRun
+                    ? 'Watch Bot again'
+                    : runMode !== 'standard'
+                      ? 'Practice again'
+                      : 'Play again'}
                 </button>
                 <div className="grid grid-cols-2 gap-2">
                   <button
@@ -1232,6 +1533,8 @@ export default function App() {
                     onClick={() => {
                       isBotRunRef.current = false;
                       setIsBotRun(false);
+                      runModeRef.current = 'standard';
+                      setRunMode('standard');
                       setGameState('TITLE_MENU');
                     }}
                     className="min-h-[40px] py-2 px-2 text-xs border whitespace-nowrap"
@@ -1243,10 +1546,10 @@ export default function App() {
                   >
                     Difficulty
                   </button>
-                  {isBotRun ? (
+                  {isBotRun || runMode !== 'standard' ? (
                     <button
                       type="button"
-                      onClick={() => startGame(false)}
+                      onClick={() => startGame('standard', false)}
                       className="min-h-[40px] py-2 px-2 text-xs border whitespace-nowrap"
                       style={{
                         backgroundColor: theme.panelBg,
@@ -1254,7 +1557,7 @@ export default function App() {
                         borderColor: theme.panelBorder,
                       }}
                     >
-                      Play yourself
+                      {isBotRun ? 'Play yourself' : 'Play full mode'}
                     </button>
                   ) : (
                     <button
@@ -1286,22 +1589,45 @@ export default function App() {
           aria-live="polite"
         >
           <div className="flex items-center justify-between text-[11px] sm:text-xs">
-            <span style={{ color: activeQuestion ? theme.accent : theme.muted }}>
-              {gameState === 'PLAYING' && activeQuestion
-                ? `${activeQuestion.category}${questionQueue.length > 0 ? ` · ${questionQueue.length} queued` : ''}`
-                : `${difficulty.label} · ${difficulty.winTarget} to win`}
+            <span
+              style={{
+                color:
+                  runMode !== 'practice_snake' && activeQuestion ? theme.accent : theme.muted,
+              }}
+            >
+              {gameState === 'PLAYING' && runMode === 'practice_snake'
+                ? `Snake Practice · ${difficulty.label}`
+                : gameState === 'PLAYING' && activeQuestion
+                  ? `${activeQuestion.category}${questionQueue.length > 0 ? ` · ${questionQueue.length} queued` : ''}`
+                  : `${difficulty.label} · ${difficulty.winTarget} to win`}
             </span>
             <span className="tabular-nums" style={{ color: theme.muted }}>
-              {gameState === 'PLAYING' && activeQuestion
-                ? `${questionRemaining.toFixed(1)}s`
-                : isBotRun && gameState === 'PLAYING'
-                  ? 'Bot active'
-                  : 'Question'}
+              {gameState === 'PLAYING' && runMode === 'practice_snake'
+                ? 'Unranked'
+                : gameState === 'PLAYING' && activeQuestion
+                  ? `${questionRemaining.toFixed(1)}s`
+                  : isBotRun && gameState === 'PLAYING'
+                    ? 'Bot active'
+                    : 'Question'}
             </span>
           </div>
 
           <div className="min-h-[3.4rem] md:flex-1 flex flex-col justify-center">
-            {gameState === 'PLAYING' && activeQuestion ? (
+            {gameState === 'PLAYING' && runMode === 'practice_snake' ? (
+              <div className="flex flex-col gap-1.5">
+                <p className="text-xs sm:text-sm md:text-base font-bold" style={{ color: theme.text }}>
+                  Snake-only practice active
+                </p>
+                <p className="text-[11px] sm:text-xs leading-relaxed" style={{ color: theme.muted }}>
+                  No questions here—just eat {difficulty.winTarget} apples before they rot while dodging{' '}
+                  {difficulty.spikesPerApple > 0
+                    ? `${formatSpikeCount(difficulty)} shifting spikes.`
+                    : difficulty.stonesPerCorrect > 0
+                      ? 'incoming stone blocks.'
+                      : 'walls and your tail.'}
+                </p>
+              </div>
+            ) : gameState === 'PLAYING' && activeQuestion ? (
               <>
                 <p
                   className="text-sm sm:text-base md:text-lg font-bold leading-snug"
@@ -1332,7 +1658,7 @@ export default function App() {
                   Eat an apple to get a question.
                 </p>
                 <p className="hidden md:block text-xs leading-relaxed" style={{ color: theme.muted }}>
-                  Questions appear here while you keep steering the snake on the board.
+                  Pick standard play, Snake-only practice, or Trivia-only practice on the board.
                 </p>
               </div>
             )}
@@ -1351,10 +1677,26 @@ export default function App() {
                   if (nextVal !== answerInput) {
                     soundEngine.playKeyType(nextVal.length < answerInput.length);
                   }
+                  const currentQ = activeQuestionRef.current;
+                  if (currentQ && isAnswerCorrect(nextVal, currentQ)) {
+                    submitAnswerValue(nextVal);
+                    return;
+                  }
+                  if (wrongFeedback) setWrongFeedback(null);
                   setAnswerInput(nextVal);
                 }}
-                disabled={gameState !== 'PLAYING' || activeQuestion === null}
-                placeholder={isBotRun ? 'Bot typing...' : 'Answer + Enter'}
+                disabled={
+                  gameState !== 'PLAYING' ||
+                  runMode === 'practice_snake' ||
+                  activeQuestion === null
+                }
+                placeholder={
+                  runMode === 'practice_snake' && gameState === 'PLAYING'
+                    ? 'Trivia disabled in Snake Practice'
+                    : isBotRun
+                      ? 'Bot typing...'
+                      : 'Type answer (auto-checks)'
+                }
                 autoComplete="off"
                 autoCapitalize="off"
                 spellCheck={false}
@@ -1362,24 +1704,14 @@ export default function App() {
                 style={{
                   backgroundColor: theme.arenaBg,
                   borderColor:
-                    gameState === 'PLAYING' && activeQuestion !== null
+                    gameState === 'PLAYING' &&
+                    runMode !== 'practice_snake' &&
+                    activeQuestion !== null
                       ? theme.accent
                       : theme.panelBorder,
                   color: theme.text,
                 }}
               />
-              {gameState === 'PLAYING' && activeQuestion !== null && !isBotRun && (
-                <button
-                  type="submit"
-                  className="min-h-[42px] px-4 text-xs font-bold shrink-0 whitespace-nowrap"
-                  style={{
-                    backgroundColor: theme.buttonBg,
-                    color: theme.buttonText,
-                  }}
-                >
-                  Enter
-                </button>
-              )}
             </form>
 
             <div
@@ -1387,16 +1719,20 @@ export default function App() {
               style={{ borderColor: theme.panelBorder, color: theme.muted }}
             >
               <span>
-                {isBotRun
-                  ? 'Bot · Unranked · Esc pause'
-                  : 'Arrows steer anytime · Esc pause'}
+                {runMode === 'practice_trivia' && gameState === 'PLAYING'
+                  ? 'Auto-checks as you type · Esc pause'
+                  : isBotRun
+                    ? 'Bot · Unranked · Esc pause'
+                    : 'Arrows steer · Auto-checks answer'}
               </span>
               <span>
-                {difficulty.spikesPerApple > 0
-                  ? `${difficulty.spikesPerApple} spikes/apple`
-                  : difficulty.stonesPerCorrect > 0
-                    ? `${difficulty.stonesPerCorrect === 1 ? '1 stone/answer' : '1 stone / 2 ans'}`
-                    : 'Clear arena'}
+                {runMode === 'practice_trivia' && gameState === 'PLAYING'
+                  ? `${difficulty.answerSeconds}s per question`
+                  : difficulty.spikesPerApple > 0
+                    ? `${formatSpikeCount(difficulty)} spikes/apple`
+                    : difficulty.stonesPerCorrect > 0
+                      ? `${difficulty.stonesPerCorrect === 1 ? '1 stone/answer' : '1 stone / 2 ans'}`
+                      : 'Clear arena'}
               </span>
             </div>
           </div>

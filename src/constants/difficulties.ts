@@ -48,10 +48,11 @@ export const DIFFICULTIES: Record<DifficultyId, DifficultyConfig> = {
     appleRotSeconds: 6,
     answerSeconds: 13,
     stonesPerCorrect: 0,
-    spikesPerApple: 4,
-    winTarget: 18,
+    spikesPerApple: 5,
+    spikesPerAppleMax: 10,
+    winTarget: 25,
     questionTiers: ['insane'],
-    description: 'Very fast snake, insane questions (9,500+ pool), 6 s apple / 13 s answer, 4 randomized spikes each apple. Win: 18 correct.',
+    description: 'Very fast snake, insane questions (9,500+ pool), 6 s apple / 13 s answer, 5-10 randomized spikes each apple. Win: 25 correct.',
   },
   extreme: {
     id: 'extreme',
@@ -69,3 +70,16 @@ export const DIFFICULTIES: Record<DifficultyId, DifficultyConfig> = {
 };
 
 export const DIFFICULTY_ORDER: DifficultyId[] = ['easy', 'medium', 'hard', 'insane', 'extreme'];
+
+export function getSpikeCountForDifficulty(cfg: DifficultyConfig): number {
+  const min = cfg.spikesPerApple;
+  const max = cfg.spikesPerAppleMax ?? min;
+  if (max <= min) return min;
+  return min + Math.floor(Math.random() * (max - min + 1));
+}
+
+export function formatSpikeCount(cfg: DifficultyConfig): string {
+  const min = cfg.spikesPerApple;
+  const max = cfg.spikesPerAppleMax ?? min;
+  return max > min ? `${min}-${max}` : `${min}`;
+}

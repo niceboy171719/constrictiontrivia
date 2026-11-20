@@ -1,5 +1,7 @@
 export type GameState = 'TITLE_MENU' | 'PLAYING' | 'PAUSED' | 'WON' | 'GAME_OVER';
 
+export type RunMode = 'standard' | 'practice_snake' | 'practice_trivia';
+
 export type PlayPhase = 'SEEK_APPLE' | 'ANSWER_QUESTION';
 
 export type DifficultyId = 'easy' | 'medium' | 'hard' | 'insane' | 'extreme';
@@ -48,7 +50,8 @@ export interface DifficultyConfig {
   appleRotSeconds: number;
   answerSeconds: number;
   stonesPerCorrect: number; // permanent stone blocks added per correct answer
-  spikesPerApple: number; // randomized spikes relocated each new apple
+  spikesPerApple: number; // randomized spikes relocated each new apple (min if range)
+  spikesPerAppleMax?: number; // optional upper bound for randomized spike count
   winTarget: number;
   questionTiers: QuestionTier[];
   description: string;

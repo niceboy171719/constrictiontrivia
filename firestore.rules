@@ -42,7 +42,7 @@ service cloud.firestore {
     }
 
     function expectedWinTarget(diff) {
-      return diff == 'extreme' ? 30 : (diff == 'insane' ? 18 : 25);
+      return diff == 'extreme' ? 30 : 25;
     }
 
     function isValidUserPrivate(data, userId) {
@@ -75,7 +75,7 @@ service cloud.firestore {
         && data.bestEasy is int && data.bestEasy >= 0 && data.bestEasy <= 25
         && data.bestMedium is int && data.bestMedium >= 0 && data.bestMedium <= 25
         && data.bestHard is int && data.bestHard >= 0 && data.bestHard <= 25
-        && data.bestInsane is int && data.bestInsane >= 0 && data.bestInsane <= 18
+        && data.bestInsane is int && data.bestInsane >= 0 && data.bestInsane <= 25
         && data.bestExtreme is int && data.bestExtreme >= 0 && data.bestExtreme <= 30
         && data.createdAt is timestamp
         && data.updatedAt is timestamp;
