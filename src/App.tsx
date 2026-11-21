@@ -124,6 +124,7 @@ export default function App() {
   const [modalTab, setModalTab] = useState<'leaderboard' | 'account'>('leaderboard');
 
   const [isBotRun, setIsBotRun] = useState<boolean>(false);
+  const [botThinkDots, setBotThinkDots] = useState<number>(0);
   const [runMode, setRunMode] = useState<RunMode>('standard');
   const [practiceNote, setPracticeNote] = useState<string | null>(null);
 
@@ -915,36 +916,64 @@ export default function App() {
     return () => cancelAnimationFrame(rafId);
   }, [gameState, addCallout, endGame, spawnRoundAppleAndSpikes, theme.accent]);
 
-  // Bot realistic typing & answering solver while Watch Bot is active
+  // Bot realistic thinking pause + variable human-like typing while Watch Bot is active
   useEffect(() => {
-    if (gameState !== 'PLAYING' || !isBotRun || !activeQuestion) return;
+    if (gameState !== 'PLAYING' || !isBotRun || !activeQuestion) {
+      setBotThinkDots(0);
+      return;
+    }
 
     const target = activeQuestion.answers[0] ?? '';
+    const promptLen = activeQuestion.prompt.length;
+    const maxBudgetMs = Math.max(2200, difficultyRef.current.answerSeconds * 1000 - 3500);
+    // Longer prompts / harder tiers look like they take slightly longer to compute, while staying well within timer
+    const baseThinkMs =
+      950 + Math.min(950, promptLen * 24) + Math.floor(Math.random() * 550);
+    const thinkDelayMs = Math.min(maxBudgetMs - target.length * 140, Math.max(900, baseThinkMs));
+
     let charIdx = 0;
     let cancelled = false;
     let timerId: number | undefined;
+    let dotTimerId: number | undefined;
+
+    setBotThinkDots(1);
+    dotTimerId = window.setInterval(() => {
+      if (!cancelled) {
+        setBotThinkDots((d) => (d % 3) + 1);
+      }
+    }, 320);
 
     const stepType = () => {
       if (cancelled || gameStateRef.current !== 'PLAYING') return;
+      if (dotTimerId !== undefined) {
+        window.clearInterval(dotTimerId);
+        dotTimerId = undefined;
+        setBotThinkDots(0);
+      }
       if (charIdx < target.length) {
         charIdx += 1;
         setAnswerInput(target.slice(0, charIdx));
         soundEngine.playKeyType(false);
-        timerId = window.setTimeout(stepType, 48);
-      } else {
-        timerId = window.setTimeout(() => {
-          if (!cancelled && gameStateRef.current === 'PLAYING') {
-            submitAnswerValue(target);
-          }
-        }, 70);
+        if (charIdx >= target.length) {
+          timerId = window.setTimeout(() => {
+            if (!cancelled && gameStateRef.current === 'PLAYING') {
+              submitAnswerValue(target);
+            }
+          }, 55);
+        } else {
+          const nextCharDelay = 85 + Math.floor(Math.random() * 65);
+          timerId = window.setTimeout(stepType, nextCharDelay);
+        }
       }
     };
 
-    timerId = window.setTimeout(stepType, 220);
+    timerId = window.setTimeout(stepType, thinkDelayMs);
 
     return () => {
       cancelled = true;
+      setBotThinkDots(0);
       if (timerId !== undefined) window.clearTimeout(timerId);
+      if (dotTimerId !== undefined) window.clearInterval(dotTimerId);
     };
   }, [gameState, isBotRun, activeQuestion, submitAnswerValue]);
 
@@ -1694,7 +1723,9 @@ export default function App() {
                   runMode === 'practice_snake' && gameState === 'PLAYING'
                     ? 'Trivia disabled in Snake Practice'
                     : isBotRun
-                      ? 'Bot typing...'
+                      ? botThinkDots > 0
+                        ? `Bot thinking${'.'.repeat(botThinkDots)}`
+                        : 'Bot typing...'
                       : 'Type answer (auto-checks)'
                 }
                 autoComplete="off"

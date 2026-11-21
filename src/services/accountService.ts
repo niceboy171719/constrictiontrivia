@@ -40,22 +40,105 @@ export const HANDLE_MIN_LENGTH = 2;
 export const HANDLE_MAX_LENGTH = 20;
 const HANDLE_REGEX = /^[a-zA-Z0-9_\- ]+$/;
 
+const RESERVED_EXACT_HANDLES = new Set([
+  'admin',
+  'administrator',
+  'mod',
+  'moderator',
+  'staff',
+  'owner',
+  'dev',
+  'developer',
+  'system',
+  'support',
+  'official',
+  'constriction',
+  'bot',
+]);
+
+const BLOCKED_HANDLE_TERMS = [
+  'nigger',
+  'nigga',
+  'faggot',
+  'fag',
+  'retard',
+  'kike',
+  'chink',
+  'spic',
+  'wetback',
+  'tranny',
+  'dyke',
+  'cunt',
+  'whore',
+  'slut',
+  'bitch',
+  'fuck',
+  'shit',
+  'dick',
+  'cock',
+  'pussy',
+  'penis',
+  'vagina',
+  'porno',
+  'porn',
+  'rape',
+  'rapist',
+  'nazi',
+  'hitler',
+  'kkk',
+  'kys',
+  'suicide',
+  'pedophile',
+  'pedo',
+];
+
+function normalizeForModeration(raw: string): string {
+  return raw
+    .toLowerCase()
+    .replace(/0/g, 'o')
+    .replace(/[1!]/g, 'i')
+    .replace(/3/g, 'e')
+    .replace(/4/g, 'a')
+    .replace(/5/g, 's')
+    .replace(/7/g, 't')
+    .replace(/[^a-z]/g, '');
+}
+
+export function validateHandle(raw: string): string | null {
+  const collapsed = raw.trim().replace(/\s+/g, ' ');
+  if (collapsed.length < HANDLE_MIN_LENGTH) {
+    return `Username must be at least ${HANDLE_MIN_LENGTH} characters.`;
+  }
+  if (collapsed.length > HANDLE_MAX_LENGTH) {
+    return `Username must be ${HANDLE_MAX_LENGTH} characters or fewer.`;
+  }
+  if (!HANDLE_REGEX.test(collapsed)) {
+    return 'Use only letters, numbers, spaces, underscores (_), or hyphens (-).';
+  }
+  const compact = normalizeForModeration(collapsed);
+  if (RESERVED_EXACT_HANDLES.has(compact)) {
+    return 'That username is reserved (no staff/system/bot impersonation).';
+  }
+  for (const term of BLOCKED_HANDLE_TERMS) {
+    if (compact.includes(term)) {
+      return 'Keep usernames respectful — offensive or explicit terms are not allowed.';
+    }
+  }
+  return null;
+}
+
 export function sanitizeHandle(raw: string): string {
   const cleaned = raw
     .replace(/[^a-zA-Z0-9_\- ]/g, '')
     .trim()
+    .replace(/\s+/g, ' ')
     .slice(0, HANDLE_MAX_LENGTH);
-  if (cleaned.length >= HANDLE_MIN_LENGTH) return cleaned;
+  if (validateHandle(cleaned) === null) return cleaned;
   return 'SnakePlayer';
 }
 
 export function isValidHandleInput(raw: string): boolean {
-  const trimmed = raw.trim();
-  return (
-    trimmed.length >= HANDLE_MIN_LENGTH &&
-    trimmed.length <= HANDLE_MAX_LENGTH &&
-    HANDLE_REGEX.test(trimmed)
-  );
+  return validateHandle(raw) === null;
 }
 
 export function getBestFieldForDifficulty(diff: DifficultyId): keyof Pick<

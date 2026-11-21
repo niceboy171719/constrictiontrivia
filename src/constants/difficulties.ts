@@ -12,7 +12,7 @@ export const DIFFICULTIES: Record<DifficultyId, DifficultyConfig> = {
     spikesPerApple: 0,
     winTarget: 25,
     questionTiers: ['easy'],
-    description: 'Slow snake, easy questions (900+ pool), 9 s apple / 22 s answer, no stone blocks. Win: 25 correct.',
+    description: 'Slow snake, easy trivia, 9 s apple / 22 s answer, no stone blocks. Win: 25 correct.',
   },
   medium: {
     id: 'medium',
@@ -25,7 +25,7 @@ export const DIFFICULTIES: Record<DifficultyId, DifficultyConfig> = {
     spikesPerApple: 0,
     winTarget: 25,
     questionTiers: ['medium'],
-    description: 'Steady snake, medium questions (1,200+ pool), 8 s apple / 18 s answer, a stone block every 2 answers. Win: 25 correct.',
+    description: 'Steady snake, medium trivia, 8 s apple / 18 s answer, a stone block every 2 answers. Win: 25 correct.',
   },
   hard: {
     id: 'hard',
@@ -38,7 +38,7 @@ export const DIFFICULTIES: Record<DifficultyId, DifficultyConfig> = {
     spikesPerApple: 0,
     winTarget: 25,
     questionTiers: ['hard'],
-    description: 'Fast snake, hard questions (1,500+ pool), 7 s apple / 16 s answer, a stone block every answer. Win: 25 correct.',
+    description: 'Fast snake, hard trivia, 7 s apple / 16 s answer, a stone block every answer. Win: 25 correct.',
   },
   insane: {
     id: 'insane',
@@ -52,7 +52,7 @@ export const DIFFICULTIES: Record<DifficultyId, DifficultyConfig> = {
     spikesPerAppleMax: 10,
     winTarget: 25,
     questionTiers: ['insane'],
-    description: 'Very fast snake, insane questions (9,500+ pool), 6 s apple / 13 s answer, 5-10 randomized spikes each apple. Win: 25 correct.',
+    description: 'Very fast snake, insane trivia, 6 s apple / 13 s answer, 5-10 randomized spikes each apple. Win: 25 correct.',
   },
   extreme: {
     id: 'extreme',
@@ -65,7 +65,7 @@ export const DIFFICULTIES: Record<DifficultyId, DifficultyConfig> = {
     spikesPerApple: 17,
     winTarget: 30,
     questionTiers: ['extreme'],
-    description: 'Relentless snake, extreme questions (25,000+ pool), 5 s apple / 11 s answer, 17 randomized spikes each apple. Win: 30 correct.',
+    description: 'Relentless snake, extreme trivia, 5 s apple / 11 s answer, 17 randomized spikes each apple. Win: 30 correct.',
   },
 };
 

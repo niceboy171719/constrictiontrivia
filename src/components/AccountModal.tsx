@@ -6,8 +6,8 @@ import {
   HANDLE_MAX_LENGTH,
   HANDLE_MIN_LENGTH,
   getBestFieldForDifficulty,
-  isValidHandleInput,
   subscribeLeaderboard,
+  validateHandle,
   type LeaderboardEntry,
   type PlayerProfile,
 } from '../services/accountService';
@@ -96,10 +96,9 @@ export const AccountModal: React.FC<AccountModalProps> = ({
 
   const handleSaveHandle = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!isValidHandleInput(handleDraft)) {
-      setHandleStatus(
-        `Use ${HANDLE_MIN_LENGTH}–${HANDLE_MAX_LENGTH} letters, numbers, spaces, _ or -.`
-      );
+    const validationError = validateHandle(handleDraft);
+    if (validationError) {
+      setHandleStatus(validationError);
       return;
     }
     setHandleSaving(true);
@@ -396,9 +395,35 @@ export const AccountModal: React.FC<AccountModalProps> = ({
                         {needsUsernameSetup ? 'Save username' : 'Save'}
                       </button>
                     </div>
-                    <p className="text-[11px]" style={{ color: theme.muted }}>
-                      {handleStatus ?? 'Letters, numbers, spaces, _ or - allowed.'}
-                    </p>
+                    {handleStatus && (
+                      <p
+                        className="text-[11px]"
+                        style={{
+                          color: handleStatus === 'Username saved.' ? '#4ADE80' : '#F87171',
+                        }}
+                      >
+                        {handleStatus}
+                      </p>
+                    )}
+
+                    <div
+                      className="pt-2 mt-1 border-t flex flex-col gap-1 text-[11px] leading-relaxed"
+                      style={{ borderColor: theme.panelBorder, color: theme.muted }}
+                    >
+                      <span className="font-bold" style={{ color: theme.text }}>
+                        Username Guidelines
+                      </span>
+                      <ul className="list-disc pl-4 space-y-0.5">
+                        <li>
+                          {HANDLE_MIN_LENGTH}–{HANDLE_MAX_LENGTH} characters: letters, numbers, spaces,{' '}
+                          <span className="font-mono-input">_</span> or{' '}
+                          <span className="font-mono-input">-</span> only.
+                        </li>
+                        <li>No profanity, slurs, hate speech, or sexually explicit names.</li>
+                        <li>No impersonating staff, moderators, admins, or bots.</li>
+                        <li>Shown publicly on the global leaderboard.</li>
+                      </ul>
+                    </div>
                   </form>
 
                   {/* Personal Bests */}

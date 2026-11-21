@@ -7,71 +7,121 @@ interface RawTrivia {
 }
 
 // ---------------------------------------------------------------------------
-// CURATED TRIVIA BANKS CALIBRATED BY DIFFICULTY
+// GENUINE TRIVIA BANKS CALIBRATED BY DIFFICULTY
 // ---------------------------------------------------------------------------
 
 const EASY_TRIVIA: RawTrivia[] = [
   { category: 'Facts', prompt: 'How many days are in a week?', answers: ['7', 'seven'] },
   { category: 'Facts', prompt: 'How many legs does a spider have?', answers: ['8', 'eight'] },
   { category: 'Facts', prompt: 'How many sides does a triangle have?', answers: ['3', 'three'] },
-  { category: 'Geography', prompt: 'What is the capital of France?', answers: ['paris'] },
-  { category: 'Geography', prompt: 'What is the capital of England?', answers: ['london'] },
-  { category: 'Science', prompt: 'Which planet is closest to the Sun?', answers: ['mercury'] },
-  { category: 'Science', prompt: 'H2O is the chemical formula for what?', answers: ['water'] },
   { category: 'Facts', prompt: 'How many months are in a year?', answers: ['12', 'twelve'] },
-  { category: 'Words', prompt: 'What is the opposite of "ancient"?', answers: ['modern', 'new'] },
-  { category: 'Facts', prompt: 'Which color is a ripe banana?', answers: ['yellow'] },
   { category: 'Facts', prompt: 'How many continents are on Earth?', answers: ['7', 'seven'] },
   { category: 'Facts', prompt: 'How many minutes are in one hour?', answers: ['60', 'sixty'] },
-  { category: 'Science', prompt: 'What gas do humans breathe in to survive?', answers: ['oxygen', 'o2'] },
-  { category: 'Words', prompt: 'What is the plural of "mouse" (animal)?', answers: ['mice'] },
-  { category: 'Geography', prompt: 'Which ocean is on the west coast of the USA?', answers: ['pacific'] },
-  { category: 'Science', prompt: 'What star gives Earth daylight?', answers: ['sun', 'the sun'] },
-  { category: 'Facts', prompt: 'How many colors are in a standard rainbow?', answers: ['7', 'seven'] },
-  { category: 'Facts', prompt: 'How many sides does a stop sign (octagon) have?', answers: ['8', 'eight'] },
-  { category: 'Words', prompt: 'What is the opposite of "ascend"?', answers: ['descend', 'fall'] },
-  { category: 'Animals', prompt: 'What is a baby dog called?', answers: ['puppy', 'pup'] },
-  { category: 'Animals', prompt: 'What is the tallest living land animal?', answers: ['giraffe'] },
-  { category: 'Facts', prompt: 'How many wheels does a standard bicycle have?', answers: ['2', 'two'] },
-  { category: 'Geography', prompt: 'What is the capital of Spain?', answers: ['madrid'] },
-  { category: 'Geography', prompt: 'What is the capital of Germany?', answers: ['berlin'] },
-  { category: 'Science', prompt: 'Which planet is famous for its prominent rings?', answers: ['saturn'] },
-  { category: 'Science', prompt: 'Which planet is known as the Red Planet?', answers: ['mars'] },
-  { category: 'Words', prompt: 'What is the plural of "tooth"?', answers: ['teeth'] },
   { category: 'Facts', prompt: 'How many seconds are in one minute?', answers: ['60', 'sixty'] },
   { category: 'Facts', prompt: 'How many cents are in one US dollar?', answers: ['100'] },
+  { category: 'Facts', prompt: 'How many colors are in a standard rainbow?', answers: ['7', 'seven'] },
+  { category: 'Facts', prompt: 'How many sides does a stop sign have?', answers: ['8', 'eight'] },
+  { category: 'Facts', prompt: 'How many wheels does a standard bicycle have?', answers: ['2', 'two'] },
+  { category: 'Facts', prompt: 'How many cards are in a standard deck (no jokers)?', answers: ['52'] },
+  { category: 'Facts', prompt: 'How many sides does a standard die have?', answers: ['6', 'six'] },
+  { category: 'Facts', prompt: 'Which color is a ripe banana?', answers: ['yellow'] },
+  { category: 'Facts', prompt: 'Which fruit is traditionally associated with Isaac Newton?', answers: ['apple'] },
+  { category: 'Geography', prompt: 'What is the capital of France?', answers: ['paris'] },
+  { category: 'Geography', prompt: 'What is the capital of England?', answers: ['london'] },
+  { category: 'Geography', prompt: 'What is the capital of Spain?', answers: ['madrid'] },
+  { category: 'Geography', prompt: 'What is the capital of Germany?', answers: ['berlin'] },
   { category: 'Geography', prompt: 'Which country is Rome located in?', answers: ['italy'] },
+  { category: 'Geography', prompt: 'Which ocean is on the west coast of the USA?', answers: ['pacific', 'pacific ocean'] },
+  { category: 'Geography', prompt: 'Which ocean is on the east coast of the USA?', answers: ['atlantic', 'atlantic ocean'] },
+  { category: 'Geography', prompt: 'What is the largest country in North America by area?', answers: ['canada'] },
+  { category: 'Geography', prompt: 'In which country is the Eiffel Tower located?', answers: ['france'] },
+  { category: 'Geography', prompt: 'Which continent is Egypt mostly in?', answers: ['africa'] },
+  { category: 'Science', prompt: 'Which planet is closest to the Sun?', answers: ['mercury'] },
+  { category: 'Science', prompt: 'H2O is the chemical formula for what?', answers: ['water'] },
+  { category: 'Science', prompt: 'What gas do humans breathe in to survive?', answers: ['oxygen', 'o2'] },
+  { category: 'Science', prompt: 'What star gives Earth daylight?', answers: ['sun', 'the sun'] },
+  { category: 'Science', prompt: 'Which planet is famous for its prominent rings?', answers: ['saturn'] },
+  { category: 'Science', prompt: 'Which planet is known as the Red Planet?', answers: ['mars'] },
+  { category: 'Science', prompt: 'What season comes directly after summer?', answers: ['autumn', 'fall'] },
+  { category: 'Science', prompt: 'What frozen form of water falls from clouds as flakes?', answers: ['snow'] },
+  { category: 'Animals', prompt: 'What is a baby dog called?', answers: ['puppy', 'pup'] },
+  { category: 'Animals', prompt: 'What is a baby cat called?', answers: ['kitten', 'kitty'] },
+  { category: 'Animals', prompt: 'What is the tallest living land animal?', answers: ['giraffe'] },
+  { category: 'Animals', prompt: 'What is the fastest land animal?', answers: ['cheetah'] },
+  { category: 'Animals', prompt: 'Which bird cannot fly and lives in Antarctica?', answers: ['penguin'] },
+  { category: 'Animals', prompt: 'Which insect makes honey?', answers: ['bee', 'honeybee'] },
+  { category: 'Words', prompt: 'What is the opposite of "ancient"?', answers: ['modern', 'new'] },
+  { category: 'Words', prompt: 'What is the opposite of "ascend"?', answers: ['descend', 'fall'] },
+  { category: 'Words', prompt: 'What is the plural of "mouse" (animal)?', answers: ['mice'] },
+  { category: 'Words', prompt: 'What is the plural of "tooth"?', answers: ['teeth'] },
+  { category: 'Words', prompt: 'What is the plural of "goose"?', answers: ['geese'] },
+  { category: 'Words', prompt: 'What is the opposite of "generous"?', answers: ['selfish', 'stingy', 'greedy'] },
+  { category: 'Pop Culture', prompt: 'What is the name of Mario’s brother in Nintendo games?', answers: ['luigi'] },
+  { category: 'Pop Culture', prompt: 'What yellow electric Pokémon is Ash’s partner?', answers: ['pikachu'] },
+  { category: 'Pop Culture', prompt: 'Which superhero is known as the Dark Knight?', answers: ['batman', 'bruce wayne'] },
+  { category: 'Pop Culture', prompt: 'What wizard school does Harry Potter attend?', answers: ['hogwarts'] },
+  { category: 'Pop Culture', prompt: 'What color is Sonic the Hedgehog?', answers: ['blue'] },
+  { category: 'Sports', prompt: 'How many players are on a standard basketball team on the court?', answers: ['5', 'five'] },
+  { category: 'Sports', prompt: 'In soccer, which player is allowed to use their hands inside the box?', answers: ['goalkeeper', 'goalie', 'keeper'] },
+  { category: 'Food', prompt: 'What Italian dish consists of dough, tomato sauce, and cheese?', answers: ['pizza'] },
+  { category: 'Food', prompt: 'Guacamole is primarily made from which fruit?', answers: ['avocado'] },
+  { category: 'Music', prompt: 'How many strings does a standard guitar have?', answers: ['6', 'six'] },
 ];
 
 const MEDIUM_TRIVIA: RawTrivia[] = [
   { category: 'Science', prompt: 'Chemical symbol for Gold?', answers: ['au'] },
   { category: 'Science', prompt: 'Chemical symbol for Oxygen?', answers: ['o'] },
   { category: 'Science', prompt: 'Chemical symbol for Iron?', answers: ['fe'] },
+  { category: 'Science', prompt: 'Largest planet in our solar system?', answers: ['jupiter'] },
+  { category: 'Science', prompt: 'Boiling point of water in Celsius at sea level?', answers: ['100'] },
+  { category: 'Science', prompt: 'Freezing point of water in Fahrenheit?', answers: ['32'] },
+  { category: 'Science', prompt: 'Which organ pumps blood through the human body?', answers: ['heart'] },
+  { category: 'Science', prompt: 'What force keeps planets in orbit around the Sun?', answers: ['gravity'] },
+  { category: 'Science', prompt: 'What gas makes up about 78% of Earth’s atmosphere?', answers: ['nitrogen', 'n2'] },
+  { category: 'Science', prompt: 'How many bones are in an adult human body?', answers: ['206'] },
+  { category: 'Science', prompt: 'What pigment makes plant leaves green?', answers: ['chlorophyll'] },
+  { category: 'Science', prompt: 'Speed of light travels fastest in a ___?', answers: ['vacuum'] },
   { category: 'Geography', prompt: 'What is the capital of Japan?', answers: ['tokyo'] },
   { category: 'Geography', prompt: 'What is the capital of Italy?', answers: ['rome'] },
   { category: 'Geography', prompt: 'What is the capital of South Korea?', answers: ['seoul'] },
   { category: 'Geography', prompt: 'What is the capital of Egypt?', answers: ['cairo'] },
   { category: 'Geography', prompt: 'What is the capital of Greece?', answers: ['athens'] },
-  { category: 'Geography', prompt: 'Longest river in South America?', answers: ['amazon'] },
-  { category: 'Science', prompt: 'Largest planet in our solar system?', answers: ['jupiter'] },
-  { category: 'Science', prompt: 'Boiling point of water in Celsius?', answers: ['100'] },
-  { category: 'Science', prompt: 'Which organ pumps blood through the body?', answers: ['heart'] },
-  { category: 'Science', prompt: 'What force pulls objects toward Earth?', answers: ['gravity'] },
-  { category: 'Tech', prompt: 'How many bits are in one byte?', answers: ['8', 'eight'] },
-  { category: 'Math', prompt: 'How many degrees in a right angle?', answers: ['90'] },
-  { category: 'Math', prompt: 'How many degrees in a triangle?', answers: ['180'] },
-  { category: 'Facts', prompt: 'How many keys on a standard piano?', answers: ['88'] },
-  { category: 'History', prompt: 'In which country were the ancient pyramids of Giza built?', answers: ['egypt'] },
-  { category: 'History', prompt: 'Who painted the Mona Lisa? (last name)', answers: ['davinci', 'da vinci', 'vinci'] },
-  { category: 'Literature', prompt: 'Who wrote "Romeo and Juliet"? (last name)', answers: ['shakespeare'] },
-  { category: 'Science', prompt: 'What gas makes up most of Earth’s atmosphere?', answers: ['nitrogen', 'n2'] },
-  { category: 'Science', prompt: 'How many bones are in an adult human body?', answers: ['206'] },
-  { category: 'Geography', prompt: 'Which country has the maple leaf on its flag?', answers: ['canada'] },
+  { category: 'Geography', prompt: 'What is the capital of Mexico?', answers: ['mexico city'] },
+  { category: 'Geography', prompt: 'What is the capital of Russia?', answers: ['moscow'] },
+  { category: 'Geography', prompt: 'Longest river in South America?', answers: ['amazon', 'amazon river'] },
+  { category: 'Geography', prompt: 'Which country has a maple leaf on its national flag?', answers: ['canada'] },
   { category: 'Geography', prompt: 'What is the largest continent by land area?', answers: ['asia'] },
+  { category: 'Geography', prompt: 'What is the official language of Brazil?', answers: ['portuguese'] },
+  { category: 'Geography', prompt: 'Which US state is known as the Sunshine State?', answers: ['florida'] },
+  { category: 'Geography', prompt: 'Which desert is the largest hot desert in the world?', answers: ['sahara', 'the sahara'] },
+  { category: 'History', prompt: 'In which country were the ancient pyramids of Giza built?', answers: ['egypt'] },
+  { category: 'History', prompt: 'Who painted the Mona Lisa? (last name)', answers: ['davinci', 'da vinci', 'vinci', 'leonardo da vinci'] },
+  { category: 'History', prompt: 'Who was the first President of the United States? (last name)', answers: ['washington', 'george washington'] },
+  { category: 'History', prompt: 'Which ship sank on its maiden voyage in April 1912?', answers: ['titanic', 'rms titanic'] },
+  { category: 'History', prompt: 'Which ancient civilization built Machu Picchu?', answers: ['inca', 'incas', 'incan'] },
+  { category: 'History', prompt: 'What wall divided Berlin from 1961 to 1989?', answers: ['berlin wall'] },
+  { category: 'Literature', prompt: 'Who wrote "Romeo and Juliet"? (last name)', answers: ['shakespeare', 'william shakespeare'] },
+  { category: 'Literature', prompt: 'Who wrote "The Great Gatsby"? (last name)', answers: ['fitzgerald', 'f scott fitzgerald'] },
+  { category: 'Literature', prompt: 'What fictional detective lived at 221B Baker Street?', answers: ['sherlock holmes', 'holmes', 'sherlock'] },
   { category: 'Mythology', prompt: 'Greek god of the sea?', answers: ['poseidon'] },
   { category: 'Mythology', prompt: 'Greek king of the gods?', answers: ['zeus'] },
+  { category: 'Mythology', prompt: 'Greek god of the underworld?', answers: ['hades'] },
+  { category: 'Mythology', prompt: 'Norse god of thunder?', answers: ['thor'] },
+  { category: 'Tech', prompt: 'How many bits are in one byte?', answers: ['8', 'eight'] },
   { category: 'Tech', prompt: 'What does "HTTP" start with? (first word)', answers: ['hypertext'] },
-  { category: 'Science', prompt: 'Speed of light travels fastest in a ___?', answers: ['vacuum'] },
+  { category: 'Tech', prompt: 'What does "CPU" stand for? (first word)', answers: ['central'] },
+  { category: 'Tech', prompt: 'Which company created the Windows operating system?', answers: ['microsoft'] },
+  { category: 'Music', prompt: 'How many keys are on a standard full-size piano?', answers: ['88'] },
+  { category: 'Music', prompt: 'Which classical composer wrote "Für Elise"? (last name)', answers: ['beethoven'] },
+  { category: 'Pop Culture', prompt: 'What is the best-selling video game of all time?', answers: ['minecraft'] },
+  { category: 'Pop Culture', prompt: 'What galaxy-spanning franchise features Jedi and Sith?', answers: ['star wars'] },
+  { category: 'Pop Culture', prompt: 'Which animated studio made "Toy Story"?', answers: ['pixar'] },
+  { category: 'Sports', prompt: 'How many holes are in a standard round of golf?', answers: ['18'] },
+  { category: 'Sports', prompt: 'In baseball, how many strikes make an out?', answers: ['3', 'three'] },
+  { category: 'Facts', prompt: 'How many degrees are in a right angle?', answers: ['90'] },
+  { category: 'Facts', prompt: 'How many degrees do the angles of a triangle add up to?', answers: ['180'] },
+  { category: 'Food', prompt: 'What Japanese dish consists of vinegared rice and fish?', answers: ['sushi'] },
+  { category: 'Food', prompt: 'Which spice is made from dried crocus flower stigmas?', answers: ['saffron'] },
 ];
 
 const HARD_TRIVIA: RawTrivia[] = [
@@ -80,11 +130,13 @@ const HARD_TRIVIA: RawTrivia[] = [
   { category: 'Science', prompt: 'Chemical symbol for Mercury?', answers: ['hg'] },
   { category: 'Science', prompt: 'Chemical symbol for Lead?', answers: ['pb'] },
   { category: 'Science', prompt: 'Chemical symbol for Copper?', answers: ['cu'] },
-  { category: 'Science', prompt: 'Element with atomic number 6?', answers: ['carbon', 'c'] },
   { category: 'Science', prompt: 'Element with atomic number 79?', answers: ['gold', 'au'] },
-  { category: 'Science', prompt: 'Hardest naturally occurring mineral?', answers: ['diamond'] },
+  { category: 'Science', prompt: 'Hardest naturally occurring mineral on the Mohs scale?', answers: ['diamond'] },
   { category: 'Science', prompt: 'Largest moon of Jupiter?', answers: ['ganymede'] },
-  { category: 'Science', prompt: 'Subatomic particle with a negative charge?', answers: ['electron'] },
+  { category: 'Science', prompt: 'Subatomic particle with a negative electric charge?', answers: ['electron'] },
+  { category: 'Science', prompt: 'Which vitamin is primarily produced when skin gets sunlight?', answers: ['d', 'vitamin d'] },
+  { category: 'Science', prompt: 'What is the powerhouse organelle of a eukaryotic cell?', answers: ['mitochondria', 'mitochondrion'] },
+  { category: 'Science', prompt: 'Which blood type is known as the universal red-cell donor?', answers: ['o negative', 'o-'] },
   { category: 'Geography', prompt: 'What is the capital of Australia?', answers: ['canberra'] },
   { category: 'Geography', prompt: 'What is the capital of Canada?', answers: ['ottawa'] },
   { category: 'Geography', prompt: 'What is the capital of Brazil?', answers: ['brasilia'] },
@@ -92,19 +144,41 @@ const HARD_TRIVIA: RawTrivia[] = [
   { category: 'Geography', prompt: 'What is the capital of New Zealand?', answers: ['wellington'] },
   { category: 'Geography', prompt: 'What is the capital of Vietnam?', answers: ['hanoi'] },
   { category: 'Geography', prompt: 'What is the capital of Peru?', answers: ['lima'] },
+  { category: 'Geography', prompt: 'What is the capital of Kenya?', answers: ['nairobi'] },
+  { category: 'Geography', prompt: 'What is the capital of Thailand?', answers: ['bangkok'] },
   { category: 'Geography', prompt: 'Deepest known trench in Earth’s oceans?', answers: ['mariana', 'mariana trench'] },
+  { category: 'Geography', prompt: 'Which river flows through Vienna, Budapest, and Belgrade?', answers: ['danube', 'danube river'] },
+  { category: 'Geography', prompt: 'Which mountain range separates Europe from Asia?', answers: ['urals', 'ural mountains', 'ural'] },
   { category: 'History', prompt: 'Year World War II ended?', answers: ['1945'] },
   { category: 'History', prompt: 'Year humans first landed on the Moon?', answers: ['1969'] },
   { category: 'History', prompt: 'Year the Berlin Wall fell?', answers: ['1989'] },
   { category: 'History', prompt: 'Year the Titanic sank?', answers: ['1912'] },
-  { category: 'History', prompt: 'First Emperor of Rome?', answers: ['augustus'] },
-  { category: 'Literature', prompt: 'Who wrote "1984"? (last name)', answers: ['orwell'] },
+  { category: 'History', prompt: 'Year the Declaration of Independence was signed?', answers: ['1776'] },
+  { category: 'History', prompt: 'Who was the first Emperor of Rome?', answers: ['augustus', 'octavian'] },
+  { category: 'History', prompt: 'Which queen ruled England during the defeat of the Spanish Armada?', answers: ['elizabeth i', 'elizabeth', 'queen elizabeth i'] },
+  { category: 'History', prompt: 'Which inventor pioneered alternating current (AC) motors? (last name)', answers: ['tesla', 'nikola tesla'] },
+  { category: 'History', prompt: 'Who invented the movable-type printing press in Europe? (last name)', answers: ['gutenberg', 'johannes gutenberg'] },
+  { category: 'Literature', prompt: 'Who wrote "1984"? (last name)', answers: ['orwell', 'george orwell'] },
   { category: 'Literature', prompt: 'Who wrote "The Odyssey"?', answers: ['homer'] },
+  { category: 'Literature', prompt: 'Who wrote "Pride and Prejudice"? (last name)', answers: ['austen', 'jane austen'] },
+  { category: 'Literature', prompt: 'Who wrote "Frankenstein"? (last name)', answers: ['shelley', 'mary shelley'] },
+  { category: 'Literature', prompt: 'Who wrote "The Hobbit"? (last name)', answers: ['tolkien', 'jrr tolkien'] },
   { category: 'Mythology', prompt: 'Norse god of mischief?', answers: ['loki'] },
   { category: 'Mythology', prompt: 'Eight-legged horse ridden by Odin?', answers: ['sleipnir'] },
+  { category: 'Mythology', prompt: 'Egyptian jackal-headed god of mummification?', answers: ['anubis'] },
+  { category: 'Mythology', prompt: 'Greek goddess of wisdom and warfare?', answers: ['athena'] },
+  { category: 'Mythology', prompt: 'Three-headed dog guarding the Greek underworld?', answers: ['cerberus'] },
   { category: 'Tech', prompt: 'Default HTTPS port number?', answers: ['443'] },
   { category: 'Tech', prompt: 'Default SSH port number?', answers: ['22'] },
+  { category: 'Tech', prompt: 'Default HTTP port number?', answers: ['80'] },
+  { category: 'Tech', prompt: 'Who is widely credited as the first computer programmer? (last name)', answers: ['lovelace', 'ada lovelace'] },
+  { category: 'Tech', prompt: 'What programming language is named after a Monty Python comedy troupe?', answers: ['python'] },
   { category: 'Music', prompt: 'How many semitones are in one octave?', answers: ['12'] },
+  { category: 'Music', prompt: 'Which band released the 1969 album "Abbey Road"?', answers: ['beatles', 'the beatles'] },
+  { category: 'Sports', prompt: 'Which country won the first FIFA World Cup in 1930?', answers: ['uruguay'] },
+  { category: 'Sports', prompt: 'What is the maximum break possible in standard snooker?', answers: ['147'] },
+  { category: 'Pop Culture', prompt: 'In "The Matrix", what color pill reveals the truth?', answers: ['red'] },
+  { category: 'Pop Culture', prompt: 'What is the fictional metal in Captain America’s shield?', answers: ['vibranium'] },
 ];
 
 const INSANE_TRIVIA: RawTrivia[] = [
@@ -112,41 +186,58 @@ const INSANE_TRIVIA: RawTrivia[] = [
   { category: 'Chemistry', prompt: 'Chemical symbol for Potassium?', answers: ['k'] },
   { category: 'Chemistry', prompt: 'Chemical symbol for Tin?', answers: ['sn'] },
   { category: 'Chemistry', prompt: 'Chemical symbol for Antimony?', answers: ['sb'] },
-  { category: 'Chemistry', prompt: 'Atomic number of Iron (Fe)?', answers: ['26'] },
-  { category: 'Chemistry', prompt: 'Atomic number of Silver (Ag)?', answers: ['47'] },
-  { category: 'Chemistry', prompt: 'Atomic number of Uranium (U)?', answers: ['92'] },
+  { category: 'Chemistry', prompt: 'Atomic number of Uranium?', answers: ['92'] },
   { category: 'Chemistry', prompt: 'pH value of pure neutral water at 25°C?', answers: ['7'] },
+  { category: 'Chemistry', prompt: 'Noble gas with atomic number 18?', answers: ['argon', 'ar'] },
+  { category: 'Chemistry', prompt: 'Process of a solid turning directly into a gas?', answers: ['sublimation'] },
+  { category: 'Chemistry', prompt: 'Most abundant element in the universe?', answers: ['hydrogen', 'h'] },
   { category: 'Physics', prompt: 'SI unit of electrical capacitance?', answers: ['farad', 'f'] },
   { category: 'Physics', prompt: 'SI unit of magnetic flux?', answers: ['weber', 'wb'] },
-  { category: 'Physics', prompt: 'SI unit of inductance?', answers: ['henry', 'h'] },
-  { category: 'Physics', prompt: 'Quark flavor paired with "top"?', answers: ['bottom'] },
+  { category: 'Physics', prompt: 'SI unit of electrical inductance?', answers: ['henry', 'h'] },
+  { category: 'Physics', prompt: 'SI unit of electrical resistance?', answers: ['ohm'] },
+  { category: 'Physics', prompt: 'Quark flavor paired with "top"?', answers: ['bottom', 'truth'] },
   { category: 'Astronomy', prompt: 'Largest moon of Saturn?', answers: ['titan'] },
-  { category: 'Astronomy', prompt: 'Closest star system to the Sun? (first word)', answers: ['alpha', 'proxima', 'alpha centauri', 'proxima centauri'] },
+  { category: 'Astronomy', prompt: 'Closest star system to the Sun? (first word or full)', answers: ['alpha', 'proxima', 'alpha centauri', 'proxima centauri'] },
   { category: 'Astronomy', prompt: 'Brightest star in Earth’s night sky?', answers: ['sirius'] },
+  { category: 'Astronomy', prompt: 'Which dwarf planet resides in the asteroid belt between Mars and Jupiter?', answers: ['ceres'] },
   { category: 'Geography', prompt: 'What is the capital of Switzerland?', answers: ['bern'] },
   { category: 'Geography', prompt: 'What is the capital of Iceland?', answers: ['reykjavik'] },
   { category: 'Geography', prompt: 'What is the capital of Mongolia?', answers: ['ulaanbaatar'] },
   { category: 'Geography', prompt: 'What is the capital of Morocco?', answers: ['rabat'] },
   { category: 'Geography', prompt: 'What is the capital of Kazakhstan?', answers: ['astana'] },
-  { category: 'Geography', prompt: 'What is the capital of Sri Lanka (legislative)?', answers: ['kotte', 'sri jayawardenepura kotte'] },
+  { category: 'Geography', prompt: 'What is the legislative capital of Sri Lanka?', answers: ['kotte', 'sri jayawardenepura kotte'] },
   { category: 'Geography', prompt: 'What is the capital of Nigeria?', answers: ['abuja'] },
-  { category: 'Geography', prompt: 'What is the capital of Bolivia (constitutional)?', answers: ['sucre'] },
+  { category: 'Geography', prompt: 'What is the constitutional capital of Bolivia?', answers: ['sucre'] },
   { category: 'Geography', prompt: 'What is the capital of Myanmar?', answers: ['naypyidaw'] },
+  { category: 'Geography', prompt: 'What is the capital of Estonia?', answers: ['tallinn'] },
+  { category: 'Geography', prompt: 'What is the capital of Latvia?', answers: ['riga'] },
+  { category: 'Geography', prompt: 'What is the capital of Lithuania?', answers: ['vilnius'] },
+  { category: 'Geography', prompt: 'Which African country is completely surrounded by South Africa?', answers: ['lesotho'] },
   { category: 'History', prompt: 'Year Constantinople fell to the Ottomans?', answers: ['1453'] },
   { category: 'History', prompt: 'Year the Magna Carta was sealed?', answers: ['1215'] },
   { category: 'History', prompt: 'Year of the Battle of Hastings?', answers: ['1066'] },
   { category: 'History', prompt: 'Year the French Revolution began?', answers: ['1789'] },
-  { category: 'History', prompt: 'Carthaginian general who crossed the Alps?', answers: ['hannibal'] },
-  { category: 'Literature', prompt: 'Author of "Crime and Punishment"? (last name)', answers: ['dostoevsky'] },
-  { category: 'Literature', prompt: 'Author of "Brave New World"? (last name)', answers: ['huxley'] },
-  { category: 'Literature', prompt: 'Author of "The Metamorphosis"? (last name)', answers: ['kafka'] },
+  { category: 'History', prompt: 'Year the Soviet Union dissolved?', answers: ['1991'] },
+  { category: 'History', prompt: 'Carthaginian general who crossed the Alps?', answers: ['hannibal', 'hannibal barca'] },
+  { category: 'History', prompt: 'Ancient Greek historian often called the "Father of History"?', answers: ['herodotus'] },
+  { category: 'History', prompt: 'Roman statesman assassinated on the Ides of March in 44 BC?', answers: ['julius caesar', 'caesar'] },
+  { category: 'Literature', prompt: 'Author of "Crime and Punishment"? (last name)', answers: ['dostoevsky', 'fyodor dostoevsky'] },
+  { category: 'Literature', prompt: 'Author of "Brave New World"? (last name)', answers: ['huxley', 'aldous huxley'] },
+  { category: 'Literature', prompt: 'Author of "The Metamorphosis"? (last name)', answers: ['kafka', 'franz kafka'] },
+  { category: 'Literature', prompt: 'Author of "Moby-Dick"? (last name)', answers: ['melville', 'herman melville'] },
+  { category: 'Literature', prompt: 'Author of "Catch-22"? (last name)', answers: ['heller', 'joseph heller'] },
   { category: 'Computing', prompt: 'HTTP status code for "I’m a teapot"?', answers: ['418'] },
-  { category: 'Computing', prompt: 'Worst-case Big-O of Quicksort? (e.g. n^2)', answers: ['n^2', 'on^2', 'n2'] },
-  { category: 'Geometry', prompt: 'How many faces on a dodecahedron?', answers: ['12'] },
-  { category: 'Geometry', prompt: 'How many faces on an icosahedron?', answers: ['20'] },
-  { category: 'Geometry', prompt: 'Sum of interior angles of a pentagon?', answers: ['540'] },
-  { category: 'Biology', prompt: 'Organelle known as the powerhouse of the cell?', answers: ['mitochondria', 'mitochondrion'] },
+  { category: 'Computing', prompt: 'HTTP status code for "Not Found"?', answers: ['404'] },
+  { category: 'Computing', prompt: 'Default port for PostgreSQL?', answers: ['5432'] },
+  { category: 'Computing', prompt: 'Creator of the Linux kernel? (last name)', answers: ['torvalds', 'linus torvalds'] },
+  { category: 'Geometry', prompt: 'How many faces are on a regular dodecahedron?', answers: ['12'] },
+  { category: 'Geometry', prompt: 'How many faces are on a regular icosahedron?', answers: ['20'] },
+  { category: 'Geometry', prompt: 'Sum of interior angles of a pentagon (degrees)?', answers: ['540'] },
   { category: 'Biology', prompt: 'Nitrogenous base pairing with Cytosine in DNA?', answers: ['guanine', 'g'] },
+  { category: 'Biology', prompt: 'Nitrogenous base found in RNA instead of Thymine?', answers: ['uracil', 'u'] },
+  { category: 'Music', prompt: 'Italian musical term meaning "gradually getting louder"?', answers: ['crescendo'] },
+  { category: 'Art', prompt: 'Dutch artist who painted "The Starry Night"? (last name)', answers: ['van gogh', 'gogh', 'vincent van gogh'] },
+  { category: 'Mythology', prompt: 'In Greek myth, who ferried souls across the river Styx?', answers: ['charon'] },
 ];
 
 const EXTREME_TRIVIA: RawTrivia[] = [
@@ -168,51 +259,169 @@ const EXTREME_TRIVIA: RawTrivia[] = [
   { category: 'Geography', prompt: 'Capital of Moldova?', answers: ['chisinau'] },
   { category: 'Geography', prompt: 'Capital of Slovenia?', answers: ['ljubljana'] },
   { category: 'Geography', prompt: 'Capital of Azerbaijan?', answers: ['baku'] },
+  { category: 'Geography', prompt: 'Capital of Madagascar?', answers: ['antananarivo'] },
+  { category: 'Geography', prompt: 'Capital of Belize?', answers: ['belmopan'] },
+  { category: 'Geography', prompt: 'Capital of Brunei?', answers: ['bandar seri begawan'] },
   { category: 'Geography', prompt: 'Strait separating Asia from North America?', answers: ['bering', 'bering strait'] },
+  { category: 'Geography', prompt: 'Strait separating Spain from Morocco?', answers: ['gibraltar', 'strait of gibraltar'] },
   { category: 'Chemistry', prompt: 'Chemical symbol for Praseodymium?', answers: ['pr'] },
   { category: 'Chemistry', prompt: 'Chemical symbol for Dysprosium?', answers: ['dy'] },
   { category: 'Chemistry', prompt: 'Chemical symbol for Molybdenum?', answers: ['mo'] },
   { category: 'Chemistry', prompt: 'Chemical symbol for Technetium?', answers: ['tc'] },
   { category: 'Chemistry', prompt: 'Chemical symbol for Darmstadtium?', answers: ['ds'] },
+  { category: 'Chemistry', prompt: 'Chemical symbol for Promethium?', answers: ['pm'] },
   { category: 'Chemistry', prompt: 'Element 107 named after Niels Bohr?', answers: ['bohrium', 'bh'] },
   { category: 'Chemistry', prompt: 'Element 104 named after Ernest Rutherford?', answers: ['rutherfordium', 'rf'] },
-  { category: 'Chemistry', prompt: 'Atomic number of Polonium (Po)?', answers: ['84'] },
-  { category: 'Chemistry', prompt: 'Atomic number of Xenon (Xe)?', answers: ['54'] },
-  { category: 'Chemistry', prompt: 'Atomic number of Osmium (Os)?', answers: ['76'] },
-  { category: 'Chemistry', prompt: 'Only metal liquid at standard room temp (20°C)?', answers: ['mercury', 'hg'] },
-  { category: 'Physics', prompt: 'Exponent of 10 in Planck’s constant (J·s)?', answers: ['-34'] },
+  { category: 'Chemistry', prompt: 'Only metal that is liquid at standard room temp (20°C)?', answers: ['mercury', 'hg'] },
+  { category: 'Chemistry', prompt: 'Mineral with hardness 10 on the Mohs scale?', answers: ['diamond'] },
+  { category: 'Chemistry', prompt: 'Allotrope of oxygen consisting of three oxygen atoms?', answers: ['ozone', 'o3'] },
   { category: 'Physics', prompt: 'SI unit of absorbed radiation dose?', answers: ['gray', 'gy'] },
   { category: 'Physics', prompt: 'SI unit of luminous flux?', answers: ['lumen', 'lm'] },
+  { category: 'Physics', prompt: 'SI unit of magnetic flux density?', answers: ['tesla', 't'] },
   { category: 'Physics', prompt: 'Particles that mediate the strong nuclear force?', answers: ['gluons', 'gluon'] },
-  { category: 'Physics', prompt: 'Hypothetical particle faster than light?', answers: ['tachyon'] },
-  { category: 'Physics', prompt: 'Scientist who formulated the Uncertainty Principle? (last name)', answers: ['heisenberg'] },
+  { category: 'Physics', prompt: 'Hypothetical particle that travels faster than light?', answers: ['tachyon', 'tachyons'] },
+  { category: 'Physics', prompt: 'Scientist who formulated the Uncertainty Principle? (last name)', answers: ['heisenberg', 'werner heisenberg'] },
+  { category: 'Physics', prompt: 'Austrian physicist behind the Exclusion Principle? (last name)', answers: ['pauli', 'wolfgang pauli'] },
   { category: 'Astronomy', prompt: 'Retrograde largest moon of Neptune?', answers: ['triton'] },
-  { category: 'Astronomy', prompt: 'Volcanically active innermost Galilean moon?', answers: ['io'] },
-  { category: 'Astronomy', prompt: 'Largest known volcano in the solar system? (first word)', answers: ['olympus', 'olympus mons'] },
-  { category: 'Astronomy', prompt: 'Star closest to the north celestial pole?', answers: ['polaris'] },
+  { category: 'Astronomy', prompt: 'Volcanically active innermost Galilean moon of Jupiter?', answers: ['io'] },
+  { category: 'Astronomy', prompt: 'Largest known volcano in the solar system?', answers: ['olympus', 'olympus mons'] },
+  { category: 'Astronomy', prompt: 'Star closest to Earth’s north celestial pole?', answers: ['polaris'] },
+  { category: 'Astronomy', prompt: 'Moon of Uranus named after a character in "The Tempest"?', answers: ['miranda', 'ariel', 'prospero', 'caliban', 'sycorax', 'trinculo', 'stephano', 'setebos', 'francisco', 'ferdinand'] },
   { category: 'History', prompt: 'Year the Peace of Westphalia was signed?', answers: ['1648'] },
   { category: 'History', prompt: 'Year of the Battle of Waterloo?', answers: ['1815'] },
-  { category: 'History', prompt: 'Year of the Defenestration of Prague (30 Years War)?', answers: ['1618'] },
+  { category: 'History', prompt: 'Year of the Defenestration of Prague (start of Thirty Years’ War)?', answers: ['1618'] },
   { category: 'History', prompt: 'Year the Treaty of Versailles was signed?', answers: ['1919'] },
   { category: 'History', prompt: 'Last Tsar of Russia? (first name)', answers: ['nicholas', 'nicholas ii'] },
   { category: 'History', prompt: 'Byzantine Emperor who commissioned Hagia Sophia?', answers: ['justinian', 'justinian i'] },
-  { category: 'History', prompt: 'Ancient library destroyed in Ptolemaic Egypt?', answers: ['alexandria'] },
-  { category: 'Literature', prompt: 'Author of "Ulysses"? (last name)', answers: ['joyce'] },
-  { category: 'Literature', prompt: 'Author of "Don Quixote"? (last name)', answers: ['cervantes'] },
+  { category: 'History', prompt: 'Ancient library destroyed in Ptolemaic Egypt?', answers: ['alexandria', 'library of alexandria'] },
+  { category: 'History', prompt: 'Persian king defeated at the Battle of Marathon in 490 BC?', answers: ['darius', 'darius i'] },
+  { category: 'Literature', prompt: 'Author of "Ulysses"? (last name)', answers: ['joyce', 'james joyce'] },
+  { category: 'Literature', prompt: 'Author of "Don Quixote"? (last name)', answers: ['cervantes', 'miguel de cervantes'] },
   { category: 'Literature', prompt: 'Author of "One Hundred Years of Solitude"? (last name)', answers: ['marquez', 'garcia marquez'] },
-  { category: 'Literature', prompt: 'Author of "The Divine Comedy"? (last name)', answers: ['dante', 'alighieri'] },
-  { category: 'Computing', prompt: 'RFC port for DNS?', answers: ['53'] },
-  { category: 'Computing', prompt: 'RFC port for BGP?', answers: ['179'] },
-  { category: 'Computing', prompt: 'Creator of the C language? (last name)', answers: ['ritchie'] },
-  { category: 'Computing', prompt: 'Turing Award pioneer who invented Quicksort? (last name)', answers: ['hoare'] },
-  { category: 'Math', prompt: 'Euler’s identity: e^(iπ) + 1 = ?', answers: ['0', 'zero'] },
-  { category: 'Math', prompt: 'Smallest Carmichael number?', answers: ['561'] },
-  { category: 'Math', prompt: 'Smallest Mersenne prime?', answers: ['3'] },
-  { category: 'Math', prompt: 'Derivative of sin(x) at x = 0?', answers: ['1', 'one'] },
-  { category: 'Math', prompt: 'Value of 0! (zero factorial)?', answers: ['1', 'one'] },
+  { category: 'Literature', prompt: 'Author of "The Divine Comedy"?', answers: ['dante', 'alighieri', 'dante alighieri'] },
+  { category: 'Literature', prompt: 'Author of "The Stranger" (L’Étranger)? (last name)', answers: ['camus', 'albert camus'] },
+  { category: 'Literature', prompt: 'Author of "Waiting for Godot"? (last name)', answers: ['beckett', 'samuel beckett'] },
+  { category: 'Computing', prompt: 'Standard IANA port for DNS?', answers: ['53'] },
+  { category: 'Computing', prompt: 'Standard IANA port for BGP?', answers: ['179'] },
+  { category: 'Computing', prompt: 'Standard IANA port for SMTP?', answers: ['25'] },
+  { category: 'Computing', prompt: 'Creator of the C programming language? (last name)', answers: ['ritchie', 'dennis ritchie'] },
+  { category: 'Computing', prompt: 'Turing Award pioneer who invented Quicksort? (last name)', answers: ['hoare', 'tony hoare'] },
+  { category: 'Computing', prompt: 'Mathematician behind the shortest-path graph algorithm? (last name)', answers: ['dijkstra', 'edsger dijkstra'] },
+  { category: 'Science', prompt: 'Smallest prime number that is also even?', answers: ['2', 'two'] },
+  { category: 'Science', prompt: 'Smallest Carmichael number?', answers: ['561'] },
+  { category: 'Mythology', prompt: 'In Norse myth, the wolf fated to devour Odin at Ragnarök?', answers: ['fenrir'] },
+  { category: 'Mythology', prompt: 'In Greek myth, the muse of astronomy?', answers: ['urania'] },
+  { category: 'Music', prompt: 'Interval of an augmented fourth / diminished fifth is also called a ___?', answers: ['tritone'] },
 ];
 
-// Full 118 periodic elements table for high-difficulty Chemistry questions
+// Additional structured factual banks for high variety without repetition
+
+const US_STATE_CAPITALS_EASY: Array<[string, string[]]> = [
+  ['Texas', ['austin']],
+  ['California', ['sacramento']],
+  ['New York', ['albany']],
+  ['Florida', ['tallahassee']],
+  ['Hawaii', ['honolulu']],
+  ['Massachusetts', ['boston']],
+  ['Georgia', ['atlanta']],
+  ['Arizona', ['phoenix']],
+  ['Colorado', ['denver']],
+  ['Tennessee', ['nashville']],
+];
+
+const US_STATE_CAPITALS_MEDIUM: Array<[string, string[]]> = [
+  ['Washington', ['olympia']],
+  ['Oregon', ['salem']],
+  ['Illinois', ['springfield']],
+  ['Ohio', ['columbus']],
+  ['Michigan', ['lansing']],
+  ['Pennsylvania', ['harrisburg']],
+  ['Virginia', ['richmond']],
+  ['North Carolina', ['raleigh']],
+  ['Nevada', ['carson city']],
+  ['Minnesota', ['saint paul', 'st paul']],
+  ['Wisconsin', ['madison']],
+  ['Louisiana', ['baton rouge']],
+];
+
+const US_STATE_CAPITALS_HARD: Array<[string, string[]]> = [
+  ['South Dakota', ['pierre']],
+  ['North Dakota', ['bismarck']],
+  ['Montana', ['helena']],
+  ['Vermont', ['montpelier']],
+  ['Kentucky', ['frankfort']],
+  ['Maine', ['augusta']],
+  ['Missouri', ['jefferson city']],
+  ['New Hampshire', ['concord']],
+  ['Wyoming', ['cheyenne']],
+  ['Alaska', ['juneau']],
+  ['Maryland', ['annapolis']],
+  ['Delaware', ['dover']],
+];
+
+const WORLD_CAPITALS_MEDIUM: Array<[string, string[]]> = [
+  ['Portugal', ['lisbon']],
+  ['Ireland', ['dublin']],
+  ['Austria', ['vienna']],
+  ['Netherlands', ['amsterdam']],
+  ['Belgium', ['brussels']],
+  ['Sweden', ['stockholm']],
+  ['Norway', ['oslo']],
+  ['Denmark', ['copenhagen']],
+  ['Poland', ['warsaw']],
+  ['Argentina', ['buenos aires']],
+  ['India', ['new delhi', 'delhi']],
+  ['China', ['beijing']],
+];
+
+const WORLD_CAPITALS_HARD: Array<[string, string[]]> = [
+  ['Finland', ['helsinki']],
+  ['Czechia', ['prague']],
+  ['Hungary', ['budapest']],
+  ['Romania', ['bucharest']],
+  ['Chile', ['santiago']],
+  ['Colombia', ['bogota']],
+  ['Malaysia', ['kuala lumpur']],
+  ['Indonesia', ['jakarta']],
+  ['Philippines', ['manila']],
+  ['Iran', ['tehran']],
+  ['Saudi Arabia', ['riyadh']],
+  ['South Africa (executive)', ['pretoria']],
+];
+
+const WORLD_CAPITALS_INSANE: Array<[string, string[]]> = [
+  ['Croatia', ['zagreb']],
+  ['Slovakia', ['bratislava']],
+  ['Bulgaria', ['sofia']],
+  ['Serbia', ['belgrade']],
+  ['Georgia', ['tbilisi']],
+  ['Armenia', ['yerevan']],
+  ['Uzbekistan', ['tashkent']],
+  ['Oman', ['muscat']],
+  ['Jordan', ['amman']],
+  ['Ethiopia', ['addis ababa']],
+  ['Ghana', ['accra']],
+  ['Senegal', ['dakar']],
+];
+
+const WORLD_CAPITALS_EXTREME: Array<[string, string[]]> = [
+  ['Comoros', ['moroni']],
+  ['Djibouti', ['djibouti', 'djibouti city']],
+  ['Guinea-Bissau', ['bissau']],
+  ['Sao Tome and Principe', ['sao tome']],
+  ['Andorra', ['andorra la vella']],
+  ['San Marino', ['san marino']],
+  ['Nauru', ['yaren']],
+  ['Kiribati', ['tarawa', 'south tarawa']],
+  ['Timor-Leste', ['dili']],
+  ['Lesotho', ['maseru']],
+  ['Eswatini (administrative)', ['mbabane']],
+  ['Botswana', ['gaborone']],
+  ['Namibia', ['windhoek']],
+  ['Zambia', ['lusaka']],
+];
+
+// Periodic table elements for genuine chemistry trivia
 const PERIODIC_ELEMENTS: Array<[number, string, string]> = [
   [1, 'H', 'Hydrogen'], [2, 'He', 'Helium'], [3, 'Li', 'Lithium'], [4, 'Be', 'Beryllium'],
   [5, 'B', 'Boron'], [6, 'C', 'Carbon'], [7, 'N', 'Nitrogen'], [8, 'O', 'Oxygen'],
@@ -230,13 +439,113 @@ const PERIODIC_ELEMENTS: Array<[number, string, string]> = [
   [90, 'Th', 'Thorium'], [92, 'U', 'Uranium'], [94, 'Pu', 'Plutonium'],
 ];
 
-const CIPHER_WORDS_HARD = [
-  'SNAKE', 'VENOM', 'COBRA', 'APPLE', 'VIPER', 'STONE', 'SPIKE', 'CRYPT', 'LOGIC',
-  'PRIME', 'OMEGA', 'QUARK', 'TITAN', 'SIGMA', 'DELTA', 'AXIOM', 'GRAPH', 'PRISM',
-  'NEXUS', 'PULSE', 'ORBIT', 'EMBER', 'FROST', 'CIPHER', 'MATRIX', 'VECTOR', 'TENSOR',
-  'BINARY', 'KERNEL', 'PYTHON', 'CARBON', 'OXYGEN', 'HELIUM', 'COBALT', 'NICKEL',
-  'SILVER', 'RADIUM', 'QUARTZ', 'ZENITH', 'VERTEX', 'MODULO', 'FACTOR', 'LAMBDA',
-];
+const CURATED_BY_TIER: Record<QuestionTier, RawTrivia[]> = {
+  easy: EASY_TRIVIA,
+  medium: MEDIUM_TRIVIA,
+  hard: HARD_TRIVIA,
+  insane: INSANE_TRIVIA,
+  extreme: EXTREME_TRIVIA,
+};
+
+function buildExpandedPoolForTier(tier: QuestionTier): RawTrivia[] {
+  const pool: RawTrivia[] = [...CURATED_BY_TIER[tier]];
+
+  if (tier === 'easy') {
+    for (const [state, answers] of US_STATE_CAPITALS_EASY) {
+      pool.push({ category: 'Geography', prompt: `Capital of ${state}?`, answers });
+    }
+    for (const [num, sym, name] of PERIODIC_ELEMENTS.slice(0, 10)) {
+      pool.push({
+        category: 'Science',
+        prompt: `What chemical element has the symbol "${sym}"?`,
+        answers: [name.toLowerCase()],
+      });
+      if (num <= 8) {
+        pool.push({
+          category: 'Science',
+          prompt: `Chemical symbol for ${name}?`,
+          answers: [sym.toLowerCase()],
+        });
+      }
+    }
+  } else if (tier === 'medium') {
+    for (const [state, answers] of US_STATE_CAPITALS_MEDIUM) {
+      pool.push({ category: 'Geography', prompt: `Capital of ${state}?`, answers });
+    }
+    for (const [country, answers] of WORLD_CAPITALS_MEDIUM) {
+      pool.push({ category: 'Geography', prompt: `Capital of ${country}?`, answers });
+    }
+    for (const [, sym, name] of PERIODIC_ELEMENTS.slice(10, 20)) {
+      pool.push({
+        category: 'Chemistry',
+        prompt: `Chemical symbol for ${name}?`,
+        answers: [sym.toLowerCase()],
+      });
+    }
+  } else if (tier === 'hard') {
+    for (const [state, answers] of US_STATE_CAPITALS_HARD) {
+      pool.push({ category: 'Geography', prompt: `Capital of ${state}?`, answers });
+    }
+    for (const [country, answers] of WORLD_CAPITALS_HARD) {
+      pool.push({ category: 'Geography', prompt: `Capital of ${country}?`, answers });
+    }
+    for (const [num, sym, name] of PERIODIC_ELEMENTS.slice(0, 30)) {
+      pool.push({
+        category: 'Chemistry',
+        prompt: `Element with atomic number ${num}?`,
+        answers: [name.toLowerCase(), sym.toLowerCase()],
+      });
+    }
+  } else if (tier === 'insane') {
+    for (const [country, answers] of WORLD_CAPITALS_INSANE) {
+      pool.push({ category: 'Geography', prompt: `Capital of ${country}?`, answers });
+    }
+    for (const [num, sym, name] of PERIODIC_ELEMENTS.slice(18, 34)) {
+      pool.push({
+        category: 'Chemistry',
+        prompt: `Atomic number of ${name}?`,
+        answers: [String(num)],
+      });
+      pool.push({
+        category: 'Chemistry',
+        prompt: `Chemical symbol for ${name}?`,
+        answers: [sym.toLowerCase()],
+      });
+    }
+  } else if (tier === 'extreme') {
+    for (const [country, answers] of WORLD_CAPITALS_EXTREME) {
+      pool.push({ category: 'Geography', prompt: `Capital of ${country}?`, answers });
+    }
+    for (const [num, sym, name] of PERIODIC_ELEMENTS.slice(34)) {
+      pool.push({
+        category: 'Chemistry',
+        prompt: `Atomic number of ${name}?`,
+        answers: [String(num)],
+      });
+      pool.push({
+        category: 'Chemistry',
+        prompt: `Element with atomic number ${num}?`,
+        answers: [name.toLowerCase(), sym.toLowerCase()],
+      });
+    }
+  }
+
+  // Deduplicate prompts to guarantee every question in a tier is distinct
+  const seen = new Set<string>();
+  return pool.filter((item) => {
+    if (seen.has(item.prompt)) return false;
+    seen.add(item.prompt);
+    return true;
+  });
+}
+
+const EXPANDED_POOLS: Record<QuestionTier, RawTrivia[]> = {
+  easy: buildExpandedPoolForTier('easy'),
+  medium: buildExpandedPoolForTier('medium'),
+  hard: buildExpandedPoolForTier('hard'),
+  insane: buildExpandedPoolForTier('insane'),
+  extreme: buildExpandedPoolForTier('extreme'),
+};
 
 function randInt(min: number, max: number): number {
   return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -246,496 +555,26 @@ function pickFrom<T>(arr: T[]): T {
   return arr[randInt(0, arr.length - 1)];
 }
 
-function gcd(a: number, b: number): number {
-  let x = Math.abs(a);
-  let y = Math.abs(b);
-  while (y !== 0) {
-    const t = x % y;
-    x = y;
-    y = t;
-  }
-  return x;
-}
-
-function isPrime(n: number): boolean {
-  if (n < 2) return false;
-  for (let i = 2; i * i <= n; i++) {
-    if (n % i === 0) return false;
-  }
-  return true;
-}
-
-function toRoman(num: number): string {
-  const table: Array<[number, string]> = [
-    [1000, 'M'], [900, 'CM'], [500, 'D'], [400, 'CD'],
-    [100, 'C'], [90, 'XC'], [50, 'L'], [40, 'XL'],
-    [10, 'X'], [9, 'IX'], [5, 'V'], [4, 'IV'], [1, 'I'],
-  ];
-  let n = num;
-  let out = '';
-  for (const [val, sym] of table) {
-    while (n >= val) {
-      out += sym;
-      n -= val;
-    }
-  }
-  return out;
-}
-
-function caesarShift(word: string, shift: number): string {
-  return word
-    .split('')
-    .map((ch) => {
-      const code = ch.charCodeAt(0) - 65;
-      return String.fromCharCode(((code + shift + 26) % 26) + 65);
-    })
-    .join('');
-}
-
-function scrambleWord(word: string): string {
-  const arr = word.split('');
-  for (let attempt = 0; attempt < 6; attempt++) {
-    for (let i = arr.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [arr[i], arr[j]] = [arr[j], arr[i]];
-    }
-    if (arr.join('') !== word) break;
-  }
-  return arr.join(' ');
-}
-
-// ---------------------------------------------------------------------------
-// TIERED PROCEDURAL GENERATORS
-// Capacity summary:
-// - Easy:    900+ unique questions
-// - Medium:  1,200+ unique questions
-// - Hard:    1,500+ unique questions
-// - Insane:  9,500+ unique questions
-// - Extreme: 25,000+ unique questions
-// ---------------------------------------------------------------------------
-
-function generateEasyQuestion(): Omit<QuestionItem, 'id'> {
-  const mode = randInt(0, 4);
-  if (mode === 0) {
-    // Addition (30 × 30 = 900 pairs)
-    const a = randInt(2, 31);
-    const b = randInt(2, 31);
-    return { tier: 'easy', category: 'Math', prompt: `${a} + ${b} = ?`, answers: [String(a + b)] };
-  }
-  if (mode === 1) {
-    // Subtraction
-    const a = randInt(12, 45);
-    const b = randInt(2, a - 1);
-    return { tier: 'easy', category: 'Math', prompt: `${a} - ${b} = ?`, answers: [String(a - b)] };
-  }
-  if (mode === 2) {
-    // Times table
-    const a = randInt(2, 10);
-    const b = randInt(2, 10);
-    return { tier: 'easy', category: 'Math', prompt: `${a} × ${b} = ?`, answers: [String(a * b)] };
-  }
-  if (mode === 3) {
-    // Simple step sequence
-    const start = randInt(1, 20);
-    const step = randInt(2, 6);
-    const seq = [start, start + step, start + step * 2, start + step * 3];
-    return {
-      tier: 'easy',
-      category: 'Sequence',
-      prompt: `Next: ${seq.join(', ')}, ?`,
-      answers: [String(start + step * 4)],
-    };
-  }
-  const word = pickFrom(['APPLE', 'SNAKE', 'TIGER', 'WATER', 'EARTH', 'MUSIC', 'PIZZA', 'OCEAN', 'PLANT', 'CLOUD']);
-  return {
-    tier: 'easy',
-    category: 'Words',
-    prompt: `Unscramble: ${scrambleWord(word)}`,
-    answers: [word.toLowerCase()],
-  };
-}
-
-function generateMediumQuestion(): Omit<QuestionItem, 'id'> {
-  const mode = randInt(0, 5);
-  if (mode === 0) {
-    // 2-digit × 1-digit (30 × 8 = 240)
-    const a = randInt(11, 35);
-    const b = randInt(3, 9);
-    return { tier: 'medium', category: 'Math', prompt: `${a} × ${b} = ?`, answers: [String(a * b)] };
-  }
-  if (mode === 1) {
-    // Clean division
-    const b = randInt(3, 14);
-    const ans = randInt(4, 22);
-    return { tier: 'medium', category: 'Math', prompt: `${b * ans} ÷ ${b} = ?`, answers: [String(ans)] };
-  }
-  if (mode === 2) {
-    // 2-digit + 2-digit (35 × 35 = 1,225)
-    const a = randInt(21, 79);
-    const b = randInt(18, 69);
-    return { tier: 'medium', category: 'Math', prompt: `${a} + ${b} = ?`, answers: [String(a + b)] };
-  }
-  if (mode === 3) {
-    // Squares minus offset
-    const a = randInt(5, 15);
-    const b = randInt(2, 15);
-    return { tier: 'medium', category: 'Math', prompt: `${a}² - ${b} = ?`, answers: [String(a * a - b)] };
-  }
-  if (mode === 4) {
-    // Roman to decimal (1..120)
-    const n = randInt(4, 120);
-    return { tier: 'medium', category: 'Numerals', prompt: `Roman numeral ${toRoman(n)} in decimal?`, answers: [String(n)] };
-  }
-  const word = pickFrom(CIPHER_WORDS_HARD.slice(0, 20));
-  return {
-    tier: 'medium',
-    category: 'Words',
-    prompt: `Unscramble: ${scrambleWord(word)}`,
-    answers: [word.toLowerCase()],
-  };
-}
-
-function generateHardQuestion(): Omit<QuestionItem, 'id'> {
-  const mode = randInt(0, 6);
-  if (mode === 0) {
-    // 2-digit × 2-digit or 2-step (25 × 15 = 375+)
-    const a = randInt(13, 29);
-    const b = randInt(6, 16);
-    const c = randInt(3, 25);
-    return { tier: 'hard', category: 'Math', prompt: `${a} × ${b} + ${c} = ?`, answers: [String(a * b + c)] };
-  }
-  if (mode === 1) {
-    // Percentages
-    const pct = pickFrom([10, 15, 20, 25, 30, 40, 60, 75]);
-    const base = randInt(2, 25) * 20;
-    return { tier: 'hard', category: 'Math', prompt: `${pct}% of ${base} = ?`, answers: [String((pct * base) / 100)] };
-  }
-  if (mode === 2) {
-    // Linear equation ax + b = c
-    const a = randInt(2, 9);
-    const x = randInt(2, 18);
-    const b = randInt(3, 30);
-    const c = a * x + b;
-    return { tier: 'hard', category: 'Algebra', prompt: `Solve x: ${a}x + ${b} = ${c}`, answers: [String(x)] };
-  }
-  if (mode === 3) {
-    // Binary to decimal (16..255)
-    const val = randInt(16, 127);
-    return { tier: 'hard', category: 'Computing', prompt: `Binary ${val.toString(2)} in decimal?`, answers: [String(val)] };
-  }
-  if (mode === 4) {
-    // Hexadecimal to decimal (16..255)
-    const val = randInt(18, 255);
-    return { tier: 'hard', category: 'Computing', prompt: `Hex 0x${val.toString(16).toUpperCase()} in decimal?`, answers: [String(val)] };
-  }
-  if (mode === 5) {
-    // Quadratic differences sequence: n^2 + offset
-    const offset = randInt(1, 25);
-    const startN = randInt(1, 5);
-    const seq = [0, 1, 2, 3].map((k) => (startN + k) * (startN + k) + offset);
-    const ans = (startN + 4) * (startN + 4) + offset;
-    return { tier: 'hard', category: 'Sequence', prompt: `Next: ${seq.join(', ')}, ?`, answers: [String(ans)] };
-  }
-  // Element symbol lookup
-  const [num, sym, name] = pickFrom(PERIODIC_ELEMENTS.slice(0, 35));
-  if (Math.random() < 0.5) {
-    return { tier: 'hard', category: 'Chemistry', prompt: `Chemical symbol for ${name}?`, answers: [sym.toLowerCase()] };
-  }
-  return { tier: 'hard', category: 'Chemistry', prompt: `Element with atomic number ${num}?`, answers: [name.toLowerCase(), sym.toLowerCase()] };
-}
-
-function generateInsaneQuestion(): Omit<QuestionItem, 'id'> {
-  // High-cardinality space > 10,000 unique verifiable combinations
-  const mode = randInt(0, 8);
-  if (mode === 0) {
-    // (a * b) + c  with 35 * 14 * 40 = 19,600 combinations!
-    const a = randInt(14, 48);
-    const b = randInt(7, 19);
-    const c = randInt(11, 50);
-    return { tier: 'insane', category: 'Math', prompt: `${a} × ${b} + ${c} = ?`, answers: [String(a * b + c)] };
-  }
-  if (mode === 1) {
-    // Linear equation with negative or larger coefficients: ax - b = c (12 * 25 * 40 = 12,000)
-    const a = randInt(3, 14);
-    const x = randInt(3, 27);
-    const b = randInt(5, 44);
-    const c = a * x - b;
-    return { tier: 'insane', category: 'Algebra', prompt: `Solve x: ${a}x - ${b} = ${c}`, answers: [String(x)] };
-  }
-  if (mode === 2) {
-    // Modular arithmetic: (a * b + c) mod m
-    const a = randInt(7, 29);
-    const b = randInt(5, 19);
-    const c = randInt(3, 25);
-    const m = randInt(7, 17);
-    return {
-      tier: 'insane',
-      category: 'Number Theory',
-      prompt: `(${a} × ${b} + ${c}) mod ${m} = ?`,
-      answers: [String((a * b + c) % m)],
-    };
-  }
-  if (mode === 3) {
-    // Hexadecimal 0x10..0x1FF (496 items)
-    const val = randInt(32, 511);
-    return {
-      tier: 'insane',
-      category: 'Computing',
-      prompt: `Hex 0x${val.toString(16).toUpperCase()} in decimal?`,
-      answers: [String(val)],
-    };
-  }
-  if (mode === 4) {
-    // Binary 8-bit
-    const val = randInt(64, 255);
-    return {
-      tier: 'insane',
-      category: 'Computing',
-      prompt: `Binary ${val.toString(2)} in decimal?`,
-      answers: [String(val)],
-    };
-  }
-  if (mode === 5) {
-    // GCD of two numbers
-    const g = randInt(3, 19);
-    const m1 = randInt(2, 11);
-    let m2 = randInt(2, 11);
-    while (gcd(m1, m2) !== 1) m2++;
-    const a = g * m1;
-    const b = g * m2;
-    return { tier: 'insane', category: 'Number Theory', prompt: `GCD(${a}, ${b}) = ?`, answers: [String(g)] };
-  }
-  if (mode === 6) {
-    // Roman numerals 100..999
-    const val = randInt(101, 999);
-    return { tier: 'insane', category: 'Numerals', prompt: `Roman ${toRoman(val)} in decimal?`, answers: [String(val)] };
-  }
-  if (mode === 7) {
-    // Caesar cipher shift +1, +2, or +3
-    const word = pickFrom(CIPHER_WORDS_HARD);
-    const shift = randInt(1, 3);
-    return {
-      tier: 'insane',
-      category: 'Cipher',
-      prompt: `Caesar decode (-${shift}): ${caesarShift(word, shift)}`,
-      answers: [word.toLowerCase()],
-    };
-  }
-  // Full periodic table challenge (all 55 harder elements)
-  const [num, sym, name] = pickFrom(PERIODIC_ELEMENTS.slice(18));
-  if (Math.random() < 0.5) {
-    return { tier: 'insane', category: 'Chemistry', prompt: `Atomic number of ${name}?`, answers: [String(num)] };
-  }
-  return { tier: 'insane', category: 'Chemistry', prompt: `Chemical symbol for ${name}?`, answers: [sym.toLowerCase()] };
-}
-
-function generateExtremeQuestion(): Omit<QuestionItem, 'id'> {
-  // Combinatorial space > 45,000 unique mathematically verified questions!
-  const mode = randInt(0, 9);
-
-  if (mode === 0) {
-    // 2-term product minus product: a*b - c*d (20 * 15 * 14 * 12 = 50,400+ combinations)
-    const a = randInt(12, 31);
-    const b = randInt(8, 22);
-    const c = randInt(4, 17);
-    const d = randInt(4, 15);
-    return {
-      tier: 'extreme',
-      category: 'Math',
-      prompt: `${a} × ${b} - ${c} × ${d} = ?`,
-      answers: [String(a * b - c * d)],
-    };
-  }
-
-  if (mode === 1) {
-    // Simultaneous equations: x + y = S, x - y = D -> solve x
-    const x = randInt(8, 65);
-    const y = randInt(3, x - 1);
-    return {
-      tier: 'extreme',
-      category: 'Algebra',
-      prompt: `x + y = ${x + y}, x - y = ${x - y}. Find x:`,
-      answers: [String(x)],
-    };
-  }
-
-  if (mode === 2) {
-    // Two-sided linear algebra: ax + b = cx + d
-    const c = randInt(2, 9);
-    const diff = randInt(2, 9);
-    const a = c + diff;
-    const x = randInt(2, 24);
-    const b = randInt(3, 35);
-    const d = diff * x + b;
-    return {
-      tier: 'extreme',
-      category: 'Algebra',
-      prompt: `Solve x: ${a}x + ${b} = ${c}x + ${d}`,
-      answers: [String(x)],
-    };
-  }
-
-  if (mode === 3) {
-    // Sum of squares / difference of squares
-    const a = randInt(9, 25);
-    const b = randInt(4, 18);
-    if (Math.random() < 0.5) {
-      return {
-        tier: 'extreme',
-        category: 'Math',
-        prompt: `${a}² + ${b}² = ?`,
-        answers: [String(a * a + b * b)],
-      };
-    }
-    return {
-      tier: 'extreme',
-      category: 'Math',
-      prompt: `${a}² - ${b}² = ?`,
-      answers: [String(a * a - b * b)],
-    };
-  }
-
-  if (mode === 4) {
-    // Modular exponentiation / large mod: (a^k) mod m
-    const a = randInt(3, 19);
-    const k = randInt(2, 4);
-    const m = randInt(5, 19);
-    let pow = 1;
-    for (let i = 0; i < k; i++) pow = (pow * a) % m;
-    return {
-      tier: 'extreme',
-      category: 'Number Theory',
-      prompt: `${a}^${k} mod ${m} = ?`,
-      answers: [String(pow)],
-    };
-  }
-
-  if (mode === 5) {
-    // Bitwise XOR (255 * 255 = 65,025 pairs!)
-    const a = randInt(12, 127);
-    const b = randInt(12, 127);
-    return {
-      tier: 'extreme',
-      category: 'Computing',
-      prompt: `${a} XOR ${b} = ?`,
-      answers: [String(a ^ b)],
-    };
-  }
-
-  if (mode === 6) {
-    // Hexadecimal 0x100..0x7FF
-    const val = randInt(256, 2047);
-    return {
-      tier: 'extreme',
-      category: 'Computing',
-      prompt: `Hex 0x${val.toString(16).toUpperCase()} in decimal?`,
-      answers: [String(val)],
-    };
-  }
-
-  if (mode === 7) {
-    // Next prime > N (for N in 50..490)
-    const start = randInt(50, 490);
-    let candidate = start + 1;
-    while (!isPrime(candidate)) candidate++;
-    return {
-      tier: 'extreme',
-      category: 'Number Theory',
-      prompt: `Smallest prime > ${start}?`,
-      answers: [String(candidate)],
-    };
-  }
-
-  if (mode === 8) {
-    // Quadratic polynomial sequence: a*n^2 + b*n + c
-    const a = randInt(1, 3);
-    const b = randInt(1, 7);
-    const c = randInt(1, 15);
-    const seq = [1, 2, 3, 4].map((n) => a * n * n + b * n + c);
-    const ans = a * 25 + b * 5 + c;
-    return {
-      tier: 'extreme',
-      category: 'Sequence',
-      prompt: `Next: ${seq.join(', ')}, ?`,
-      answers: [String(ans)],
-    };
-  }
-
-  // Caesar shift -3..-7 on hard words
-  const word = pickFrom(CIPHER_WORDS_HARD);
-  const shift = randInt(3, 7);
-  return {
-    tier: 'extreme',
-    category: 'Cipher',
-    prompt: `Caesar decode (-${shift}): ${caesarShift(word, shift)}`,
-    answers: [word.toLowerCase()],
-  };
-}
-
-const CURATED_BY_TIER: Record<QuestionTier, RawTrivia[]> = {
-  easy: EASY_TRIVIA,
-  medium: MEDIUM_TRIVIA,
-  hard: HARD_TRIVIA,
-  insane: INSANE_TRIVIA,
-  extreme: EXTREME_TRIVIA,
-};
-
-function generateProceduralForTier(tier: QuestionTier): Omit<QuestionItem, 'id'> {
-  switch (tier) {
-    case 'easy':
-      return generateEasyQuestion();
-    case 'medium':
-      return generateMediumQuestion();
-    case 'hard':
-      return generateHardQuestion();
-    case 'insane':
-      return generateInsaneQuestion();
-    case 'extreme':
-      return generateExtremeQuestion();
-  }
-}
-
 export const QUESTION_POOL_ESTIMATES: Record<QuestionTier, number> = {
-  easy: 900,
-  medium: 1200,
-  hard: 1500,
-  insane: 9500,
-  extreme: 25000,
+  easy: EXPANDED_POOLS.easy.length,
+  medium: EXPANDED_POOLS.medium.length,
+  hard: EXPANDED_POOLS.hard.length,
+  insane: EXPANDED_POOLS.insane.length,
+  extreme: EXPANDED_POOLS.extreme.length,
 };
 
 export function pickQuestion(tiers: QuestionTier[], usedPrompts: Set<string>): QuestionItem {
   const tier = tiers[randInt(0, tiers.length - 1)];
+  const fullPool = EXPANDED_POOLS[tier];
+  const unused = fullPool.filter((q) => !usedPrompts.has(q.prompt));
+  const candidates = unused.length > 0 ? unused : fullPool;
+  const picked = pickFrom(candidates);
+  usedPrompts.add(picked.prompt);
 
-  // Mix curated trivia (~38% on easy/medium/hard, ~25% on insane/extreme where 9k-25k+ procedural pool prevents memorization)
-  const triviaChance = tier === 'extreme' ? 0.22 : tier === 'insane' ? 0.28 : 0.42;
-  if (Math.random() < triviaChance) {
-    const curatedPool = CURATED_BY_TIER[tier].filter((q) => !usedPrompts.has(q.prompt));
-    if (curatedPool.length > 0) {
-      const picked = pickFrom(curatedPool);
-      usedPrompts.add(picked.prompt);
-      return {
-        ...picked,
-        tier,
-        id: `triv-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
-      };
-    }
-  }
-
-  for (let attempt = 0; attempt < 25; attempt++) {
-    const q = generateProceduralForTier(tier);
-    if (!usedPrompts.has(q.prompt)) {
-      usedPrompts.add(q.prompt);
-      return {
-        ...q,
-        id: `proc-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
-      };
-    }
-  }
-
-  const fallback = generateProceduralForTier(tier);
   return {
-    ...fallback,
-    id: `proc-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+    ...picked,
+    tier,
+    id: `triv-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
   };
 }
 
